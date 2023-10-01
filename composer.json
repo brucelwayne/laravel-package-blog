@@ -24,5 +24,15 @@
         "psr-4": {
             "Brucelwayne\\Blog\\Tests\\": "tests"
         }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Brucelwayne\\Blog\\BlogServiceProvider"
+            ],
+            "aliases": {
+                "Blog": "Brucelwayne\\Blog\\Facades\\BlogFacade"
+            }
+        }
     }
 }
