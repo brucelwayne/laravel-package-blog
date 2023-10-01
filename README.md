@@ -1,1 +1,1 @@
-# laravel-mr-blog
+# laravel-blog
