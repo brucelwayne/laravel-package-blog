@@ -1,5 +1,5 @@
 {
-    "name": "brucelwayne/laravel-blog",
+    "name": "brucelwayne/laravel-package-blog",
     "description": "An open-source blog system based on Laravel that is ready to use out of the box.",
     "type": "library",
     "license": "MIT",
