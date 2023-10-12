@@ -1,5 +1,5 @@
 @extends('layouts.admin')
 
 @section('content')
-    asdf
+    This is blog index template file.
 @endsection
