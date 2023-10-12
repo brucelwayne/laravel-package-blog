@@ -2,6 +2,7 @@
 
 use Brucelwayne\Blog\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
+use UniSharp\LaravelFilemanager\Controllers\UploadController;
 
 Route::prefix('admin/blog')->name('admin.blog.')
     ->middleware(['web', 'auth:admin'])
@@ -10,7 +11,7 @@ Route::prefix('admin/blog')->name('admin.blog.')
         //admin index page
         Route::get('/', [AdminController::class, 'index'])->name('index');
 
-        Route::get('create', [AdminController::class, 'index'])->name('create.show');
+        Route::get('create', [AdminController::class, 'create'])->name('create.show');
 
         Route::get('edit', [AdminController::class, 'index'])->name('edit.show');
 
@@ -19,4 +20,9 @@ Route::prefix('admin/blog')->name('admin.blog.')
         Route::get('cates', [AdminController::class, 'index'])->name('cates.show');
 
         Route::get('tags', [AdminController::class, 'index'])->name('tags.show');
+
+        Route::prefix('file')->name('file.')->group(function () {
+            Route::get('upload',[UploadController::class,'upload'])->name('upload');
+            \UniSharp\LaravelFilemanager\Lfm::routes();
+        });
     });

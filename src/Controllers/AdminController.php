@@ -11,7 +11,7 @@ class AdminController extends Controller
     }
 
     function create(){
-
+        return view('blog::blog.admin.create');
     }
 
     function store(){
