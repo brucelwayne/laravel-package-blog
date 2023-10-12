@@ -15,7 +15,7 @@
                 <h1 class="font-semibold text-xl">
                     Create a New Blog
                 </h1>
-                <div class="text-right">
+                <div class="text-right space-x-2">
                     <button type="submit" class="text-white bg-amber-600 hover:bg-amber-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                         Save as Draft
                     </button>
@@ -87,7 +87,7 @@
                     @endpush
                 </div>
 
-                <div class="text-right">
+                <div class="text-right space-x-2">
                     <button type="submit" class="text-white bg-amber-600 hover:bg-amber-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded text-sm px-5 py-2.5 text-center dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                         Save as Draft
                     </button>
