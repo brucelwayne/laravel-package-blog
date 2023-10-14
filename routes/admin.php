@@ -5,7 +5,7 @@ use Brucelwayne\Blog\Controllers\UploadController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('admin/blog')->name('admin.blog.')
-    ->middleware(['web', 'auth:admin'])
+    ->middleware(['web', 'auth:admin','inertia'])
     ->group(function () {
 
         //admin index page
