@@ -12,7 +12,8 @@ Route::prefix('admin/blog')->name('admin.blog.')
         Route::get('/', [AdminController::class, 'index'])->name('index');
 
         Route::get('create', [AdminController::class, 'create'])->name('create.show');
-        Route::post('create', [AdminController::class, 'store'])->name('create.save');
+        Route::post('create', [AdminController::class, 'store'])
+            ->name('create.save');
 
         Route::get('edit', [AdminController::class, 'index'])->name('edit.show');
 

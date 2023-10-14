@@ -3,6 +3,10 @@ namespace Brucelwayne\Blog\Models;
 
 use Brucelwayne\Blog\Enums\BlogStatus;
 use Illuminate\Database\Eloquent\Model;
+use Spatie\Sluggable\HasSlug;
+use Spatie\Sluggable\HasTranslatableSlug;
+use Spatie\Sluggable\SlugOptions;
+use Spatie\Translatable\HasTranslations;
 use Veelasky\LaravelHashId\Eloquent\HashableId;
 
 /**
@@ -23,6 +27,9 @@ use Veelasky\LaravelHashId\Eloquent\HashableId;
 class BlogModel extends Model
 {
     use HashableId;
+//    use HasSlug;
+//    use HasTranslations, HasTranslatableSlug;
+//    public $translatable = ['title', 'slug'];
 
     protected $table = 'blogs';
 
@@ -55,9 +62,28 @@ class BlogModel extends Model
         'seo_title',
         'seo_keywords',
         'seo_content',
+        'token',
     ];
 
     protected $casts = [
         'status',
     ];
+
+    //slug
+//    public function getSlugOptions() : SlugOptions
+//    {
+//        return SlugOptions::create()
+//            ->generateSlugsFrom('title')
+//            ->saveSlugsTo('slug')
+//            ->slugsShouldBeNoLongerThan(190)
+//            ->doNotGenerateSlugsOnUpdate(); //for permalinks
+//    }
+
+    public static function byToken($token){
+        return self::where('token',$token)->first();
+    }
+
+    public static function byTokenOrFail($token){
+        return self::where('token',$token)->firstOrFail();
+    }
 }

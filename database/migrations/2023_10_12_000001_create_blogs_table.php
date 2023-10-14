@@ -26,13 +26,13 @@ return new class extends Migration {
 
             $table->string('slug')->index();
 
-            $table->text('title');
-            $table->text('excerpt');
-            $table->text('content');
+            $table->text('title')->nullable();
+            $table->text('excerpt')->nullable();
+            $table->text('content')->nullable();
 
-            $table->text('seo_title');
-            $table->text('seo_keywords');
-            $table->text('seo_description');
+            $table->text('seo_title')->nullable();
+            $table->text('seo_keywords')->nullable();
+            $table->text('seo_description')->nullable();
 
             $table->string('token', 21)->unique();
             $table->timestamps();
