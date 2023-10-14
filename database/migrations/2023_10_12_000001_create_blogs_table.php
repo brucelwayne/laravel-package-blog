@@ -18,7 +18,10 @@ return new class extends Migration {
             $table->integer('team_id')->default(0)->index();
             $table->integer('creator_id')->index();
             $table->integer('author_id')->default(0)->index();
-            $table->integer('default_cate_id')->default(0)->index();
+
+            $table->integer('featured_image_id')->default(0)->index();
+            $table->integer('cate_id')->default(0)->index();
+
             $table->string('status')->default(BlogStatus::DRAFT->value)->index();
 
             $table->string('slug')->index();

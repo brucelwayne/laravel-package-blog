@@ -9,7 +9,7 @@ use Veelasky\LaravelHashId\Eloquent\HashableId;
  * @property integer $team_id
  * @property integer creator_id
  * @property integer author_id
- * @property integer default_cate_id
+ * @property integer cate_id
  * @property BlogStatus status
  * @property string title
  * @property string slug
@@ -44,7 +44,7 @@ class BlogModel extends Model
         'team_id',
         'creator_id',
         'author_id',
-        'default_cate_id',
+        'cate_id',
         'status',
         'title',
         'slug',
