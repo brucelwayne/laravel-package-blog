@@ -11,7 +11,7 @@ class CreateBlogRequest extends FormRequest
             'excerpt' => ['required'],
             'content'=>['required'],
             'featured_image_url' => ['required'],
-            'token' => ['required','max:21'],
+//            'token' => ['required','max:21'],
         );
     }
 }

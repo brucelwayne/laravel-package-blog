@@ -11,11 +11,15 @@ Route::prefix('admin/blog')->name('admin.blog.')
         //admin index page
         Route::get('/', [AdminController::class, 'index'])->name('index');
 
+        Route::get('single', [AdminController::class, 'single'])->name('single.show');
+
         Route::get('create', [AdminController::class, 'create'])->name('create.show');
         Route::post('create', [AdminController::class, 'store'])
-            ->name('create.save');
+            ->name('create.store');
 
-        Route::get('edit', [AdminController::class, 'index'])->name('edit.show');
+        Route::get('edit', [AdminController::class, 'edit'])->name('edit.show');
+        Route::post('edit', [AdminController::class, 'update'])
+            ->name('edit.update');
 
         Route::delete('delete', [AdminController::class, 'index'])->name('delete');
 
