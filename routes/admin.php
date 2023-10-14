@@ -1,8 +1,8 @@
 <?php
 
 use Brucelwayne\Blog\Controllers\AdminController;
+use Brucelwayne\Blog\Controllers\UploadController;
 use Illuminate\Support\Facades\Route;
-use UniSharp\LaravelFilemanager\Controllers\UploadController;
 
 Route::prefix('admin/blog')->name('admin.blog.')
     ->middleware(['web', 'auth:admin'])
@@ -31,7 +31,7 @@ Route::prefix('admin/blog')->name('admin.blog.')
         Route::get('tags', [AdminController::class, 'index'])->name('tags.show');
 
         Route::prefix('file')->name('file.')->group(function () {
-            Route::get('upload',[UploadController::class,'upload'])->name('upload');
-            \UniSharp\LaravelFilemanager\Lfm::routes();
+            Route::post('upload',[UploadController::class,'upload'])->name('upload');
+//            \UniSharp\LaravelFilemanager\Lfm::routes();
         });
     });
