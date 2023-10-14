@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->integer('creator_id')->index();
             $table->integer('author_id')->default(0)->index();
 
-            $table->integer('featured_image_id')->default(0)->index();
+            $table->text('featured_image_url');
             $table->integer('cate_id')->default(0)->index();
 
             $table->string('status')->default(BlogStatus::DRAFT->value)->index();

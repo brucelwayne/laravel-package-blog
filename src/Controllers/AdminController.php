@@ -2,19 +2,20 @@
 namespace Brucelwayne\Blog\Controllers;
 
 use App\Http\Controllers\Controller;
-use Brucelwayne\Blog\Models\BlogModel;
-use Illuminate\Http\Request;
 use Mallria\Core\Facades\Inertia;
 
 class AdminController extends Controller
 {
     function index(){
 
-        return view('blog::blog.admin.index');
+        return Inertia::renderVue('Blog/Admin/Index');
+//        return view('blog::blog.admin.index');
     }
 
     function create(){
-        return view('blog::blog.admin.create');
+
+        return Inertia::renderVue('Blog/Admin/Create');
+//        return view('blog::blog.admin.create');
     }
 
     function store(){
