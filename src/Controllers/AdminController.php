@@ -70,12 +70,14 @@ class AdminController extends Controller
          */
         $admin = Auth::guard('admin')->user();
 
+        $stats = BlogStatus::from($request->validated('status'));
+
         $blog_model = BlogModel::create([
             'team_id' => 0,//system blog is 0
             'creator_id' => $admin->getKey(),
             'author_id' => $admin->getKey(),
             'cate_id' => 0, // no category
-            'status' => BlogStatus::Publish->value,
+            'status' => $stats->value,
             'featured_image_url' => $request->validated('featured_image_url'),
             'slug' => $slug,
             'title' => $request->validated('title'),
@@ -123,11 +125,14 @@ class AdminController extends Controller
             ]);
         }
 
+        $stats = BlogStatus::from($request->validated('status'));
+
         $blog_model->title = $request->validated('title');
         $blog_model->excerpt = $request->validated('excerpt');
         $blog_model->content = $request->validated('content');
         $blog_model->featured_image_url = $request->validated('featured_image_url');
         $blog_model->slug = $request->validated('slug');
+        $blog_model->status = $stats->value;
 
         if ($blog_model->save()){
             $status = 'success';

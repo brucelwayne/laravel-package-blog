@@ -2,8 +2,11 @@
 
 namespace Brucelwayne\Blog\Requests;
 
+use Brucelwayne\Blog\Enums\BlogCrudActions;
+use Brucelwayne\Blog\Enums\BlogStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Enum;
 
 class BlogCrudRequest extends FormRequest
 {
@@ -18,6 +21,7 @@ class BlogCrudRequest extends FormRequest
             'action' => ['required', Rule::in('create', 'edit')],
             'hash' => ['sometimes', 'max:32'],
             'slug' => ['sometimes', 'required', 'max:190'],
+            'status' => ['required',new Enum(BlogStatus::class)],
         );
     }
 }
