@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('admin::layouts.admin',['title'=>'Create a New Blog Post'])
 
 @section('content')
     @push('styles')
@@ -11,6 +11,7 @@
         <script src="{{ asset('vendor/laraberg/js/laraberg.js') }}"></script>
     @endpush
         <form action="{{route('admin.blog.create.show')}}" method="post">
+            @csrf
             <div class="flex justify-between items-start">
                 <div class="flex-1 max-w-6xl mx-auto space-y-6 bg-white p-10 rounded shadow">
                     <h1 class="font-semibold text-3xl">

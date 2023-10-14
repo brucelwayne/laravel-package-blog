@@ -8,14 +8,14 @@ class AdminController extends Controller
 {
     function index(){
 
-        return Inertia::renderVue('Blog/Admin/Index');
-//        return view('blog::blog.admin.index');
+//        return Inertia::renderVue('Blog/Admin/Index');
+        return view('blog::blog.admin.index');
     }
 
     function create(){
 
-        return Inertia::renderVue('Blog/Admin/Create');
-//        return view('blog::blog.admin.create');
+//        return Inertia::renderVue('Blog/Admin/Create');
+        return view('blog::blog.admin.create');
     }
 
     function store(){
