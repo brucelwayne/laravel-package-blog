@@ -22,7 +22,7 @@ return new class extends Migration {
             $table->text('featured_image_url');
             $table->integer('cate_id')->default(0)->index();
 
-            $table->string('status')->default(BlogStatus::DRAFT->value)->index();
+            $table->string('status')->default(BlogStatus::Draft->value)->index();
 
             $table->string('slug');
 
