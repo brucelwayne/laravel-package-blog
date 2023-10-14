@@ -1,5 +1,6 @@
 <?php
 
+use Brucelwayne\Blog\Enums\BlogStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\Schema;
 
@@ -16,15 +17,17 @@ return new class extends Migration {
             $table->increments('id');
             $table->integer('team_id')->default(0)->index();
             $table->integer('creator_id')->index();
-            $table->integer('author_id')->index();
-            $table->integer('default_cate_id')->index();
-            $table->string('status')->index();
+            $table->integer('author_id')->default(0)->index();
+            $table->integer('default_cate_id')->default(0)->index();
+            $table->string('status')->default(BlogStatus::DRAFT->value)->index();
+
             $table->string('slug')->index();
-            $table->string('title');
+
+            $table->text('title');
             $table->text('excerpt');
             $table->text('content');
 
-            $table->string('seo_title');
+            $table->text('seo_title');
             $table->text('seo_keywords');
             $table->text('seo_description');
 
@@ -42,11 +45,11 @@ return new class extends Migration {
             $table->integer('default_cate_id');
             $table->integer('category_ids');
             $table->string('slug');
-            $table->string('title');
+            $table->text('title');
             $table->text('excerpt');
             $table->text('content');
 
-            $table->string('seo_title');
+            $table->text('seo_title');
             $table->text('seo_keywords');
             $table->text('seo_description');
 
