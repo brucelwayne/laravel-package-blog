@@ -105,4 +105,9 @@ class BlogModel extends Model
     {
         return self::where('slug', $slug)->where('team_id', $team_id)->first();
     }
+
+    public static function bySlugOrFail($slug, $team_id = 0)
+    {
+        return self::where('slug', $slug)->where('team_id', $team_id)->firstOrFail();
+    }
 }
