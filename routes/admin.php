@@ -21,7 +21,10 @@ Route::prefix('admin/blog')->name('admin.blog.')
         Route::post('edit', [AdminController::class, 'update'])
             ->name('edit.update');
 
-        Route::delete('delete', [AdminController::class, 'index'])->name('delete');
+        Route::put('edit/status',[AdminController::class, 'updateStatus'])
+            ->name('edit.put.status');
+
+        Route::delete('delete', [AdminController::class, 'delete'])->name('delete');
 
         Route::get('cates', [AdminController::class, 'index'])->name('cates.show');
 

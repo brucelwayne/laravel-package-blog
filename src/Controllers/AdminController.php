@@ -22,7 +22,13 @@ class AdminController extends Controller
     function index()
     {
 
-        return Inertia::renderVue('Blog/Admin/Index');
+        $blog_models = BlogModel::where('team_id',0)
+            ->orderBy('id','DESC')
+            ->paginate(10);
+
+        return Inertia::renderVue('Blog/Admin/Index',[
+            'blogs' => $blog_models,
+        ]);
 //        return view('blog::blog.admin.index');
     }
 
@@ -148,5 +154,28 @@ class AdminController extends Controller
             'message' => $message,
         ]);
 
+    }
+
+    function updateStatus(Request $request){
+        $hash = $request->get('hash');
+        $status = $request->get('status');
+
+        $blog_model = BlogModel::byHashOrFail($hash);
+        $blog_model->status = $status ? BlogStatus::Publish : BlogStatus::Draft;
+        if ($blog_model->save()){
+            return new SuccessJsonResponse([],'Update blog post successfully!');
+        }else{
+            return new ErrorJsonResponse('Update blog post error!');
+        }
+    }
+
+    function delete(Request $request){
+        $hash = $request->get('hash');
+        $blog_model = BlogModel::byHashOrFail($hash);
+        if ($blog_model->delete()){
+            return new SuccessJsonResponse([],'Delete blog post successfully!');
+        }else{
+            return new ErrorJsonResponse('Delete blog post error!');
+        }
     }
 }

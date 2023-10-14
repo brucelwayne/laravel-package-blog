@@ -4,6 +4,7 @@ namespace Brucelwayne\Blog\Models;
 
 use Brucelwayne\Blog\Enums\BlogStatus;
 use Illuminate\Database\Eloquent\Model;
+use MongoDB\Laravel\Eloquent\SoftDeletes;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\HasTranslatableSlug;
 use Spatie\Sluggable\SlugOptions;
@@ -28,7 +29,9 @@ use Veelasky\LaravelHashId\Eloquent\HashableId;
  * @method static self create(...$args)
  * @method static self first()
  * @method static self firstOrFail()
- * @method static self where()
+ * @method static self where(...$args)
+ * @method static self orderBy(...$args)
+ * @method static array paginate($limit);
  */
 class BlogModel extends Model
 {
