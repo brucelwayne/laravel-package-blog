@@ -6,7 +6,7 @@
             @if(!empty($blogs))
                 @foreach($blogs as $blog)
                     <section class="bg-white rounded shadow p-6">
-                        <a href="{{route('blog.single',['slug'=>$blog->slug])}}">
+                        <a href="{{\Mcamara\LaravelLocalization\Facades\LaravelLocalization::localizeUrl(route('blog.single',['slug'=>$blog->slug]))}}">
                             <div class="flex flex-row justify-start items-start">
                                 <div class="w-1/2">
                                     <img src="{{$blog->featured_image_url}}" alt="{{$blog->title}}" />
