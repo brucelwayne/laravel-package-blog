@@ -31,7 +31,8 @@ use Veelasky\LaravelHashId\Eloquent\HashableId;
  * @method static self firstOrFail()
  * @method static self where(...$args)
  * @method static self orderBy(...$args)
- * @method static array paginate($limit);
+ * @method static self paginate($limit)
+ * @method static self withQueryString()
  */
 class BlogModel extends Model
 {

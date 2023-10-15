@@ -8,10 +8,20 @@ use Illuminate\Http\Request;
 
 class BlogController extends Controller
 {
-    function index($slug, Request $request){
+    function single($slug, Request $request){
         $blog_model = BlogModel::bySlugOrFail($slug);
         return view('blog::blog.single',[
             'blog'=>$blog_model,
+        ]);
+    }
+
+    function index(){
+        $blog_models = BlogModel::where('team_id',0)
+            ->orderBy('id','DESC')
+            ->paginate(10)
+            ->withQueryString();
+        return view('blog::blog.index',[
+            'blogs'=>$blog_models,
         ]);
     }
 }
