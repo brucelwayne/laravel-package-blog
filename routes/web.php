@@ -12,7 +12,8 @@ Route::middleware(['web'])
     ->group(function () {
         Route::get('blog', [BlogController::class, 'index'])->name('blog.index');
 //        Route::get('blog/page/{page?}',[BlogController::class, 'index'])->where('page','[1-9]+[0-9]*');
-        Route::get('blog/{slug}', [BlogController::class, 'single'])
-            ->name('blog.single')
+        Route::get('blog/post', [BlogController::class, 'singleByHash'])->name('blog.single.hash');
+        Route::get('blog/{slug}', [BlogController::class, 'singleBySlug'])
+            ->name('blog.single.slug')
             ->where('slug', '[a-zA-Z0-9-]+');
     });

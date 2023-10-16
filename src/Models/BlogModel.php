@@ -16,14 +16,15 @@ use Veelasky\LaravelHashId\Eloquent\HashableId;
 
 class BlogModel extends PostModel
 {
-    public static function boot(){
+    public static function boot()
+    {
         parent::boot();
 
-        static::creating(function ($instance){
+        static::creating(function ($instance) {
             $instance->type = PostType::Blog->value;
         });
 
-        static::created(function ($instance){
+        static::created(function ($instance) {
             //
         });
     }
@@ -42,5 +43,14 @@ class BlogModel extends PostModel
             ->withTeam(0)
             ->withType(PostType::Blog)
             ->firstOrFail();
+    }
+
+    public function singleUrl()
+    {
+        if (empty($this->slug)) {
+            return route('blog.single.hash', ['hash' => $this->hash]);
+        }else{
+            return route('blog.single.slug', ['slug' => $this->slug]);
+        }
     }
 }

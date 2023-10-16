@@ -58,16 +58,18 @@
         </div>
 
         <div style="
-        background-image:url('{{$blog->featured_image_url}}');
+        @if(!empty($blog['image']['url']))
+        background-image:url('{{$blog['image']['url']}}');
+        @endif
         " class="bg-no-repeat bg-cover bg-center max-w-screen-md mx-auto rounded">
             <div class="bg-[#00000060] px-10 py-[100px] text-white rounded-t">
                 <div class="blog-single-head text-center">
-                    <h1 class="heading text-5xl font-semibold">
-                        {{$blog->title}}
+                    <h1 class="heading text-5xl font-semibold capitalize">
+                        {{$blog['title'] ?? 'Untitled blog post'}}
                     </h1>
                 </div>
                 <div class="blog-single-meta mt-4 text-right text-gray-100">
-                    {{\Carbon\Carbon::parse($blog->updated_at)->format('j F, Y')}}
+                    {{\Carbon\Carbon::parse($blog->updated_at)->toFormattedDateString()}}
                 </div>
             </div>
         </div>

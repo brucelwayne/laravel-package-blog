@@ -6,21 +6,27 @@
             @if(!empty($blogs))
                 @foreach($blogs as $blog)
                     <section class="bg-white rounded shadow p-6">
-                        <a href="{{\Mcamara\LaravelLocalization\Facades\LaravelLocalization::localizeUrl(route('blog.single',['slug'=>$blog->slug]))}}">
-                            <div class="flex flex-row justify-start items-start">
-                                <div class="w-1/2">
-                                    <img src="{{$blog->featured_image_url}}" alt="{{$blog->title}}" />
-                                </div>
-                                <div class="px-6">
-                                    <h2 class="text-2xl heading">
-                                        {{$blog->title}}
-                                    </h2>
-                                    <p class="mt-4">
-                                        {{$blog->excerpt}}
-                                    </p>
-                                </div>
+
+                        <div class="flex flex-row justify-start items-start">
+                            <div class="w-1/2">
+                                <a href="{{\Mcamara\LaravelLocalization\Facades\LaravelLocalization::localizeUrl($blog->singleUrl())}}">
+                                    @if(!empty($blog['image']['url']))
+                                        <img src="{{$blog['image']['url']}}" alt="{{$blog->title}}"/>
+                                    @endif
+                                </a>
                             </div>
-                        </a>
+                            <div class="px-6">
+                                <a class="text-gray-800 hover:text-blue-600 hover:underline underline-offset-4"
+                                        href="{{\Mcamara\LaravelLocalization\Facades\LaravelLocalization::localizeUrl($blog->singleUrl())}}">
+                                    <h2 class="text-2xl heading capitalize">
+                                        {{$blog['title'] ?? 'Untitled blog post'}}
+                                    </h2>
+                                </a>
+                                <p class="mt-4">
+                                    {{$blog['excerpt']}}
+                                </p>
+                            </div>
+                        </div>
                     </section>
                 @endforeach
             @endif
