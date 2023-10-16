@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
-Route::middleware(['web'])
+Route::middleware(['web', 'localizationRedirect'])
     ->prefix(LaravelLocalization::setLocale())
     ->group(function () {
         Route::get('blog', [BlogController::class, 'index'])->name('blog.index');

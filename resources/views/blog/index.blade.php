@@ -6,23 +6,24 @@
             @if(!empty($blogs))
                 @foreach($blogs as $blog)
                     <section class="bg-white rounded shadow p-6">
-
                         <div class="flex flex-row justify-start items-start">
                             <div class="w-1/2">
-                                <a href="{{\Mcamara\LaravelLocalization\Facades\LaravelLocalization::localizeUrl($blog->singleUrl())}}">
+                                <a class="relative group"
+                                        href="{{\Mcamara\LaravelLocalization\Facades\LaravelLocalization::localizeUrl($blog->singleUrl())}}">
                                     @if(!empty($blog['image']['url']))
-                                        <img src="{{$blog['image']['url']}}" alt="{{$blog->title}}"/>
+                                        <img class="rounded-lg" src="{{$blog['image']['url']}}" alt="{{$blog->title}}"/>
                                     @endif
+                                    <div class="w-full h-full rounded-lg left-0 top-0 absolute z-10 group-hover:bg-[#00000040] transition-all ease-in-out"></div>
                                 </a>
                             </div>
                             <div class="px-6">
                                 <a class="text-gray-800 hover:text-blue-600 hover:underline underline-offset-4"
                                         href="{{\Mcamara\LaravelLocalization\Facades\LaravelLocalization::localizeUrl($blog->singleUrl())}}">
-                                    <h2 class="text-2xl heading capitalize">
+                                    <h2 class="text-lg font-medium capitalize">
                                         {{$blog['title'] ?? 'Untitled blog post'}}
                                     </h2>
                                 </a>
-                                <p class="mt-4">
+                                <p class="mt-4 font-light text-gray-700">
                                     {{$blog['excerpt']}}
                                 </p>
                             </div>
