@@ -68,7 +68,7 @@ $submitButtonClass = $instance['status'] === \Mallria\Core\Enums\PostStatus::Pub
 
                                 const uploadedResponse = await axios({
                                     method: "POST",
-                                    url: `{{route('admin.blog.file.upload')}}`,
+                                    url: `{{route('admin.blog.file.upload',['blog'=>$instance['hash']])}}`,
                                     data: formD,
                                 })
 
@@ -77,9 +77,10 @@ $submitButtonClass = $instance['status'] === \Mallria\Core\Enums\PostStatus::Pub
                                 const uploadedFiles = Array.from(filesList).map(file => {
 
                                     return {
-                                        id: new Date().getTime(),
+                                        id: uploadedResponse?.data?.media?.hash,
                                         name: file.name,
-                                        url: uploadedResponse?.data?.url
+                                        alt:file.name,
+                                        url: uploadedResponse?.data?.media?.url
                                     }
                                 })
 
@@ -103,7 +104,8 @@ $submitButtonClass = $instance['status'] === \Mallria\Core\Enums\PostStatus::Pub
         <div class="p-6 bg-white shadow rounded min-w-[30rem]">
             <div class="text-right space-x-2">
                 @php($status = old('status',$instance['status']??'draft'))
-                <input type="hidden" name="crud" value="{{old('crud',$instance['crud']??'create')}}"/>
+                <input type="hidden" name="hash" value="{{$instance['hash']}}" />
+                <input type="hidden" name="crud" value="{{old('crud',$form['crud']??'create')}}"/>
                 <input type="hidden" name="status" value="{{$status}}"/>
 
                 <div class="btn-status-group inline-flex rounded-md shadow-sm relative" role="group">
@@ -167,20 +169,73 @@ $submitButtonClass = $instance['status'] === \Mallria\Core\Enums\PostStatus::Pub
                 <label for="featured-image" class="block mb-2 text-sm font-semibold text-gray-900 dark:text-white">
                     Featured image:
                 </label>
-                <div class="flex items-center justify-center w-full">
-                    <label for="featured-image"
-                           class="flex flex-col items-center justify-center w-full h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
-                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                            <svg class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
-                                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                      stroke-width="2"
-                                      d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
-                            </svg>
-                            <p class="mb-2 text-sm text-gray-500 dark:text-gray-400"><span class="font-semibold">Click to upload</span>
-                                or drag and drop</p>
+                <div class="flex items-center justify-start w-full">
+                    <label
+                           class="flex flex-col items-center justify-center w-64 h-64 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 dark:hover:bg-bray-800 dark:bg-gray-700 hover:bg-gray-100 dark:border-gray-600 dark:hover:border-gray-500 dark:hover:bg-gray-600">
+                        <div class="featured-image-preview flex flex-col items-center justify-center pt-5 pb-6">
+
+                            @if(empty($instance['image']))
+                                <svg class="w-8 h-8 mb-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                          stroke-width="2"
+                                          d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                                </svg>
+                                <p class="mb-2 text-sm text-gray-500 dark:text-gray-400">
+                                    <span class="font-semibold">Click to upload</span>
+                                    or drag and drop</p>
+                            @else
+                                <img src="{{$instance['image']['thumb']}}" />
+                            @endif
                         </div>
-                        <input id="featured-image" type="file" class="hidden"/>
+                        <input type="hidden" name="image" value="{{ $instance['image']['hash'] ?? 0 }}" />
+                        <input id="featured-image-input" type="file" class="hidden"/>
+                        @push('scripts')
+                            <script>
+                                (function ($) {
+                                    $(function () {
+                                        const blogFeaturedImageUploadInput =  $('#featured-image-input');
+                                        blogFeaturedImageUploadInput.change(function (event) {
+                                            console.log(event);
+                                            var file = $(this)[0].files[0];
+                                            let formD = new FormData;
+                                            formD.append('upload', file);
+
+                                            axios({
+                                                method: "POST",
+                                                url: `{{route('admin.blog.file.upload',['blog'=>$instance['hash']])}}`,
+                                                data: formD,
+                                                headers: {
+                                                    "Content-Type": "multipart/form-data",
+                                                },
+                                                onUploadProgress: (progressEvent) => {
+                                                    console.log('progressEvent',progressEvent);
+                                                    const { loaded, total } = progressEvent;
+                                                    let percent = Math.floor((loaded * 100) / total);
+                                                    if (percent < 100) {
+                                                        console.log(`${loaded} bytes of ${total} bytes. ${percent}%`);
+                                                    }else{
+                                                        console.log('percent',percent);
+                                                    }
+                                                }
+                                            }).then(response=>response.data)
+                                                .then(response=>{
+                                                    if(response.status === 'success'){
+                                                        const media = response.media;
+                                                        $('.featured-image-preview').html(`<img src="${media.thumb}" />`);
+                                                        blogFeaturedImageUploadInput.val(null);
+                                                        $('input[name="image"]').val(media.hash);
+                                                    }
+                                                })
+                                                .catch(error=>console.error(error))
+                                                .finally(()=>{
+
+                                                })
+                                        });
+                                    });
+                                })(jQuery);
+                            </script>
+                        @endpush
                     </label>
                 </div>
             </div>

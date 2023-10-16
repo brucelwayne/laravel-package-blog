@@ -5,14 +5,15 @@
         'page'=>['heading'=>'Create a New Blog Post'],
         'form' => [
             'action'=>route('admin.blog.create.show'),
+            'crud'=> \Brucelwayne\Blog\Enums\BlogCrudActions::Create->value,
         ],
         'instance'=>[
+            'hash' => '',
             'title'=>'',
             'excerpt'=>'',
-            'content' => '',
+            'content'=>'',
             'image'=>'',
-            'crud'=> \Brucelwayne\Blog\Enums\BlogCrudActions::Create->value,
-            'status'=> \Mallria\Core\Enums\PostStatus::Draft->value,
-         ],
+            'status'=>\Mallria\Core\Enums\PostStatus::Draft->value,
+],
     ])
 @endsection

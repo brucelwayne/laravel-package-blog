@@ -17,6 +17,7 @@ use Mallria\Core\Facades\Inertia;
 use Mallria\Core\Facades\NanoIdFacade;
 use Mallria\Core\Http\Responses\ErrorJsonResponse;
 use Mallria\Core\Http\Responses\SuccessJsonResponse;
+use Mallria\Media\Models\MediaModel;
 
 class AdminController extends Controller
 {
@@ -36,8 +37,24 @@ class AdminController extends Controller
         $hash = $request->get('hash');
     }
 
-    function create()
+    function create(Request $request)
     {
+//        $hash = $request->get('hash');
+//        if (empty($hash)) {
+//            /**
+//             * @var AdminModel $admin_model
+//             */
+//            $admin_model = auth()->guard('admin')->user();
+//            $blog_model = BlogModel::createDraft($admin_model->getKey());
+//            return redirect()->to(route('admin.blog.edit.show', ['hash' => $blog_model->hash]));
+//        }
+//        else {
+//            $blog_model = BlogModel::byHashOrFail($hash);
+//            return view('blog::blog.admin.create', [
+//                'blog' => $blog_model,
+//            ]);
+//        }
+
         return view('blog::blog.admin.create');
     }
 
@@ -106,25 +123,37 @@ class AdminController extends Controller
         if ($crud !== BlogCrudActions::Edit) {
             return redirect()->back()->withInput($request->input())
                 ->withErrors('Invalid action for this blog!')
-                ->with('blog',$blog_model);
+                ->with('blog', $blog_model);
+        }
+        $title = $request->validated('title');
+        $slug = $request->validated('slug');
+        if (empty($slug)) {
+            if (!empty($title)){
+                $slug = BlogFacade::getSlug($title);
+            }
+        }else{
+            $slug = BlogFacade::getSlug($request->validated('slug'));
+            $blog_slug_model = BlogModel::bySlug($slug);
+            if (!empty($blog_slug_model) && $blog_slug_model->getKey() !== $blog_model->getKey()) {
+                return redirect()->back()->withInput($request->input())
+                    ->withErrors('Duplicated slug, please choose another one!')
+                    ->with('blog', $blog_model);
+            }
         }
 
-        $blog_slug_model = BlogModel::bySlug($request->validated('slug'));
-        if (!empty($blog_slug_model) && $blog_slug_model->getKey() !== $blog_model->getKey()) {
-            return redirect()->back()->withInput($request->input())
-                ->withErrors('Duplicated slug, please choose another one!')
-                ->with('blog',$blog_model);
+        $image_hash = $request->validated('image');
+        if (!empty($image_hash)){
+            $media_model = MediaModel::byHash($image_hash);
         }
 
         $stats = BlogStatus::from($request->validated('status'));
 
-        $slug = BlogFacade::getSlug($request->validated('slug'));
-
-        $blog_model->title = $request->validated('title');
+        $blog_model->title = $title;
         $blog_model->excerpt = $request->validated('excerpt');
         $blog_model->content = $request->validated('content');
         $blog_model->slug = $slug;
         $blog_model->status = $stats->value;
+        $blog_model->image_id = empty($media_model) ? 0 : $media_model->getKey();
 
         if ($blog_model->save()) {
             $status = 'success';
@@ -135,9 +164,8 @@ class AdminController extends Controller
         }
 
 
-
         return redirect()->back()
-            ->with('blog',$blog_model)
+            ->with('blog', $blog_model)
             ->with([
                 'status' => $status,
                 'message' => $message,

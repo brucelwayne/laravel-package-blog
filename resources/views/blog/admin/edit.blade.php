@@ -1,19 +1,14 @@
-@extends('admin::layouts.admin',['title'=>'Edit Blog Post'])
+@php($title = 'Blog Post')
+
+@extends('admin::layouts.admin',['title'=>$title])
 
 @section('content')
     @include('blog::components.blog-form',[
-        'page'=>['heading'=>'Edit Blog Post'],
+        'page'=>['heading'=>$title],
         'form' => [
             'action'=>route('admin.blog.edit.update',['hash'=>$blog['hash']]),
-        ],
-        'instance'=>[
-            'slug' => $blog['slug'],
-            'title'=>$blog['title'],
-            'excerpt'=>$blog['excerpt'],
-            'content' => $blog['content'],
-            'image'=>$blog['image'],
             'crud'=> \Brucelwayne\Blog\Enums\BlogCrudActions::Edit->value,
-            'status'=> $blog['status'],
-         ],
+        ],
+        'instance'=>$blog
     ])
 @endsection

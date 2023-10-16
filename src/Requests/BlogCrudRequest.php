@@ -14,15 +14,15 @@ class BlogCrudRequest extends FormRequest
     public function rules()
     {
         return array(
-            'title' => ['required', 'max:200'],
-            'excerpt' => ['required'],
-            'content' => ['required'],
-            'image_id' => ['sometimes','required'],
+            'title' => ['sometimes','max:200'],
+            'excerpt' => ['sometimes',],
+            'content' => ['sometimes', ],
+            'image' => ['sometimes', 'max:32'],//hash
 //            'token' => ['required','max:21'],
             'crud' => ['required', new Enum(BlogCrudActions::class)],
             'hash' => ['sometimes', 'max:32'],
-            'slug' => ['sometimes', 'required', 'max:190'],
-            'status' => ['required',new Enum(PostStatus::class)],
+            'slug' => ['sometimes', 'max:190'],
+            'status' => ['required', new Enum(PostStatus::class)],
         );
     }
 }

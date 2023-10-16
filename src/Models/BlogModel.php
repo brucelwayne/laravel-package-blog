@@ -27,4 +27,20 @@ class BlogModel extends PostModel
             //
         });
     }
+
+    public static function bySlug($slug, $team_id = 0)
+    {
+        return self::where('slug', $slug)
+            ->withTeam(0)
+            ->withType(PostType::Blog)
+            ->first();
+    }
+
+    public static function bySlugOrFail($slug, $team_id = 0)
+    {
+        return self::where('slug', $slug)
+            ->withTeam(0)
+            ->withType(PostType::Blog)
+            ->firstOrFail();
+    }
 }
