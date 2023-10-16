@@ -43,8 +43,8 @@ class AdminController extends Controller
 
     function store(BlogCrudRequest $request)
     {
-        $action = BlogCrudActions::from($request->validated('action'));
-        if ($action !== BlogCrudActions::Create) {
+        $crud = BlogCrudActions::from($request->validated('crud'));
+        if ($crud !== BlogCrudActions::Create) {
             return redirect()->back()->withInput($request->input());
         }
 
@@ -99,30 +99,31 @@ class AdminController extends Controller
 
     function update(BlogCrudRequest $request)
     {
-        $action = BlogCrudActions::from($request->validated('action'));
-        if ($action !== BlogCrudActions::Edit) {
-            return Inertia::renderVue('Blog/Admin/Edit', [
-                'error' => 'Invalid action for this blog',
-            ]);
-        }
 
         $blog_model = BlogModel::byHashOrFail($request->validated('hash'));
 
+        $crud = BlogCrudActions::from($request->validated('crud'));
+        if ($crud !== BlogCrudActions::Edit) {
+            return redirect()->back()->withInput($request->input())
+                ->withErrors('Invalid action for this blog!')
+                ->with('blog',$blog_model);
+        }
+
         $blog_slug_model = BlogModel::bySlug($request->validated('slug'));
         if (!empty($blog_slug_model) && $blog_slug_model->getKey() !== $blog_model->getKey()) {
-            return Inertia::renderVue('Blog/Admin/Edit', [
-                'blog' => $blog_model,
-                'error' => 'Duplicated slug, please choose another one!',
-            ]);
+            return redirect()->back()->withInput($request->input())
+                ->withErrors('Duplicated slug, please choose another one!')
+                ->with('blog',$blog_model);
         }
 
         $stats = BlogStatus::from($request->validated('status'));
 
+        $slug = BlogFacade::getSlug($request->validated('slug'));
+
         $blog_model->title = $request->validated('title');
         $blog_model->excerpt = $request->validated('excerpt');
         $blog_model->content = $request->validated('content');
-        $blog_model->featured_image_url = $request->validated('featured_image_url');
-        $blog_model->slug = $request->validated('slug');
+        $blog_model->slug = $slug;
         $blog_model->status = $stats->value;
 
         if ($blog_model->save()) {
@@ -133,11 +134,14 @@ class AdminController extends Controller
             $message = 'Update blog post error!';
         }
 
-        return Inertia::renderVue('Blog/Admin/Edit', [
-            'blog' => $blog_model,
-            'status' => $status,
-            'message' => $message,
-        ]);
+
+
+        return redirect()->back()
+            ->with('blog',$blog_model)
+            ->with([
+                'status' => $status,
+                'message' => $message,
+            ]);
 
     }
 

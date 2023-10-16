@@ -9,26 +9,50 @@
             crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="{{ asset('vendor/laraberg/js/laraberg.js') }}"></script>
 @endpush
-<form action="{{route('admin.blog.create.show')}}" method="post">
+<?php
+$publishButtonClass = 'text-white bg-primary-700 hover:bg-primary-600';
+$draftButtonClass = 'text-white bg-gray-500 hover:bg-gray-600';
+$submitButtonClass = $instance['status'] === \Mallria\Core\Enums\PostStatus::Publish ? $publishButtonClass : $draftButtonClass
+?>
+<script>
+    var currentSubmitButtonClass = '{{$publishButtonClass}}';
+    const submitButtonClass = {
+        '{{\Mallria\Core\Enums\PostStatus::Publish}}': '{{$publishButtonClass}}',
+        '{{\Mallria\Core\Enums\PostStatus::Draft}}': '{{$draftButtonClass}}',
+    };
+</script>
+<form action="{{$form['action']}}" method="post">
     @csrf
     <div class="flex justify-between items-start">
         <div class="flex-1 max-w-6xl mx-auto space-y-6 bg-white p-10 rounded shadow">
             <h1 class="font-semibold text-3xl">
                 {{$page['heading']}}
             </h1>
+            @include('components.form-errors')
             <div>
                 <label for="title"
                        class="block mb-2 text-sm font-semibold text-gray-900 dark:text-white">
                     Title
                 </label>
                 <input type="text" id="title" name="title"
-                       value="{{old('title',$form['title']??'')}}"
+                       value="{{old('title',$instance['title']??'')}}"
                        class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
             </div>
+            @if(!empty($blog['slug']))
+                <div>
+                    <label for="slug"
+                           class="block mb-2 text-sm font-semibold text-gray-900 dark:text-white">
+                        Slug
+                    </label>
+                    <input type="text" id="slug" name="slug"
+                           value="{{old('slug',$instance['slug']??'')}}"
+                           class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"/>
+                </div>
+            @endif
             <div>
                 <label for="content"
                        class="block mb-2 text-sm font-semibold text-gray-900 dark:text-white">Content</label>
-                <textarea id="content" name="content" hidden>{{old('content',$form['content']??'')}}</textarea>
+                <textarea id="content" name="content" hidden>{{old('content',$instance['content']??'')}}</textarea>
                 @push('scripts')
                     <script type="text/javascript">
                         const mediaUploaded = ({
@@ -78,38 +102,41 @@
 
         <div class="p-6 bg-white shadow rounded min-w-[30rem]">
             <div class="text-right space-x-2">
-                @php($status = old('status',$form['status']??'draft'))
-                <input type="hidden" name="action" value="{{old('action',$form['action']??'create')}}"/>
+                @php($status = old('status',$instance['status']??'draft'))
+                <input type="hidden" name="crud" value="{{old('crud',$instance['crud']??'create')}}"/>
                 <input type="hidden" name="status" value="{{$status}}"/>
 
-                <div class="inline-flex rounded-md shadow-sm relative" role="group">
-                    <button type="submit" class="btn-submit capitalize font-semibold inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-primary-700 hover:bg-primary-600 border border-gray-200 rounded-l-lg">
+                <div class="btn-status-group inline-flex rounded-md shadow-sm relative" role="group">
+                    <button type="submit"
+                            class="{{$submitButtonClass}} btn-submit capitalize font-semibold inline-flex items-center px-4 py-2 text-sm font-medium border border-gray-200 rounded-l-lg">
                         Save to {{$status}}
                     </button>
                     <button type="button"
                             id="dropdownStatusBtn"
                             data-dropdown-toggle="dropdownStatusMenu" data-dropdown-trigger="click"
-                            class="inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-primary-700 hover:bg-primary-600 border border-gray-200 rounded-r-md">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                            class="{{$submitButtonClass}} inline-flex items-center px-3 py-2 text-sm font-medium border border-gray-200 rounded-r-md">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                             stroke="currentColor" class="w-4 h-4">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5"/>
                         </svg>
                     </button>
                 </div>
                 <!-- Dropdown menu -->
-                <div id="dropdownStatusMenu" class="z-10 text-left hidden bg-white divide-y divide-gray-100 rounded-lg shadow-lg dark:bg-gray-700">
+                <div id="dropdownStatusMenu"
+                     class="z-10 text-left hidden bg-white divide-y divide-gray-100 rounded-lg shadow-lg dark:bg-gray-700">
                     <ul class="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownHoverButton">
                         <li>
                             <a href="#"
-                               data-value="{{\Mallria\Core\Enums\PostStatus::PUBLISH->value}}"
+                               data-value="{{\Mallria\Core\Enums\PostStatus::Publish->value}}"
                                class="btn-status capitalize block px-6 py-3 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                {{\Mallria\Core\Enums\PostStatus::PUBLISH->value}}
+                                {{\Mallria\Core\Enums\PostStatus::Publish->value}}
                             </a>
                         </li>
                         <li>
                             <a href="#"
-                               data-value="{{\Mallria\Core\Enums\PostStatus::DRAFT->value}}"
+                               data-value="{{\Mallria\Core\Enums\PostStatus::Draft->value}}"
                                class="btn-status capitalize block px-6 py-3 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                {{\Mallria\Core\Enums\PostStatus::DRAFT->value}}
+                                {{\Mallria\Core\Enums\PostStatus::Draft->value}}
                             </a>
                         </li>
                     </ul>
@@ -124,7 +151,9 @@
                                     const value = $(this).data('value');
                                     $('input[name="status"]').val(value);
                                     $('.btn-submit').html('Save to ' + value);
-                                    dropdownMenuClick('dropdownStatusBtn','dropdownStatusMenu')
+                                    dropdownMenuClick('dropdownStatusBtn', 'dropdownStatusMenu');
+                                    $('.btn-status-group').find('button').removeClass(currentSubmitButtonClass).addClass(submitButtonClass[value]);
+                                    currentSubmitButtonClass = submitButtonClass[value];
                                     return false;
                                 });
                             });
@@ -166,7 +195,7 @@
                         name="excerpt"
                         rows="6"
                         placeholder=""
-                >{{old('excerpt',$form['excerpt']??'')}}</textarea>
+                >{{old('excerpt',$instance['excerpt']??'')}}</textarea>
             </div>
         </div>
     </div>

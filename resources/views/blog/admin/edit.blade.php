@@ -3,13 +3,17 @@
 @section('content')
     @include('blog::components.blog-form',[
         'page'=>['heading'=>'Edit Blog Post'],
-        'form'=>[
+        'form' => [
+            'action'=>route('admin.blog.edit.update',['hash'=>$blog['hash']]),
+        ],
+        'instance'=>[
+            'slug' => $blog['slug'],
             'title'=>$blog['title'],
             'excerpt'=>$blog['excerpt'],
             'content' => $blog['content'],
             'image'=>$blog['image'],
-            'action'=>'create',
-            'status'=>'draft',
+            'crud'=> \Brucelwayne\Blog\Enums\BlogCrudActions::Edit->value,
+            'status'=> $blog['status'],
          ],
     ])
 @endsection

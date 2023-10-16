@@ -3,13 +3,16 @@
 @section('content')
     @include('blog::components.blog-form',[
         'page'=>['heading'=>'Create a New Blog Post'],
-        'form'=>[
+        'form' => [
+            'action'=>route('admin.blog.create.show'),
+        ],
+        'blog'=>[
             'title'=>'',
             'excerpt'=>'',
             'content' => '',
             'image'=>'',
-            'action'=>'create',
-            'status'=>'draft',
+            'crud'=> \Brucelwayne\Blog\Enums\BlogCrudActions::Create->value,
+            'status'=> \Mallria\Core\Enums\PostStatus::Draft->value,
          ],
     ])
 @endsection

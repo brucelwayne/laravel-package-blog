@@ -19,7 +19,7 @@ class BlogCrudRequest extends FormRequest
             'content' => ['required'],
             'image_id' => ['sometimes','required'],
 //            'token' => ['required','max:21'],
-            'action' => ['required', Rule::in('create', 'edit')],
+            'crud' => ['required', new Enum(BlogCrudActions::class)],
             'hash' => ['sometimes', 'max:32'],
             'slug' => ['sometimes', 'required', 'max:190'],
             'status' => ['required',new Enum(PostStatus::class)],
