@@ -6,7 +6,7 @@
         'form' => [
             'action'=>route('admin.blog.create.show'),
         ],
-        'blog'=>[
+        'instance'=>[
             'title'=>'',
             'excerpt'=>'',
             'content' => '',
