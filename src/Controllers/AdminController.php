@@ -12,6 +12,7 @@ use Brucelwayne\Blog\Requests\BlogCrudRequest;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Mallria\Core\Enums\PostStatus;
 use Mallria\Core\Facades\Inertia;
 use Mallria\Core\Facades\NanoIdFacade;
 use Mallria\Core\Http\Responses\ErrorJsonResponse;
@@ -21,46 +22,30 @@ class AdminController extends Controller
 {
     function index()
     {
-
-        $blog_models = BlogModel::where('team_id',0)
-            ->orderBy('id','DESC')
+        $blog_models = BlogModel::where('team_id', 0)
+            ->orderBy('id', 'DESC')
             ->paginate(10);
 
-        return Inertia::renderVue('Blog/Admin/Index',[
+        return view('blog::blog.admin.index', [
             'blogs' => $blog_models,
         ]);
-//        return view('blog::blog.admin.index');
     }
 
     function single(Request $request)
     {
         $hash = $request->get('hash');
-
     }
 
     function create()
     {
-        return Inertia::renderVue('Blog/Admin/Create', [
-            'token' => NanoIdFacade::generate(),
-        ]);
-//        return view('blog::blog.admin.create');
+        return view('blog::blog.admin.create');
     }
 
     function store(BlogCrudRequest $request)
     {
-//        $blog_model = BlogModel::byToken($request->validated('token'));
-//        if (!empty($blog_model)) {
-//            return Inertia::renderVue('Blog/Admin/Create', [
-//                'token' => NanoIdFacade::generate(),
-//                'error' => 'Duplicated token for create blog post',
-//            ]);
-//        }
-
         $action = BlogCrudActions::from($request->validated('action'));
         if ($action !== BlogCrudActions::Create) {
-            return Inertia::renderVue('Blog/Admin/Create', [
-                'error' => 'Invalid action',
-            ]);
+            return redirect()->back()->withInput($request->input());
         }
 
         $slug = BlogFacade::getSlug($request->validated('title'));
@@ -76,7 +61,7 @@ class AdminController extends Controller
          */
         $admin = Auth::guard('admin')->user();
 
-        $stats = BlogStatus::from($request->validated('status'));
+        $stats = PostStatus::from($request->validated('status'));
 
         $blog_model = BlogModel::create([
             'team_id' => 0,//system blog is 0
@@ -84,7 +69,7 @@ class AdminController extends Controller
             'author_id' => $admin->getKey(),
             'cate_id' => 0, // no category
             'status' => $stats->value,
-            'featured_image_url' => $request->validated('featured_image_url'),
+            'image_id' => $request->validated('image_id'),
             'slug' => $slug,
             'title' => $request->validated('title'),
             'excerpt' => $request->validated('excerpt'),
@@ -107,7 +92,7 @@ class AdminController extends Controller
             return to_route('admin.blog.index');
         }
 
-        return Inertia::renderVue('Blog/Admin/Edit', [
+        return view('blog::blog.admin.edit', [
             'blog' => $blog_model
         ]);
     }
@@ -124,7 +109,7 @@ class AdminController extends Controller
         $blog_model = BlogModel::byHashOrFail($request->validated('hash'));
 
         $blog_slug_model = BlogModel::bySlug($request->validated('slug'));
-        if (!empty($blog_slug_model) && $blog_slug_model->getKey() !== $blog_model->getKey()){
+        if (!empty($blog_slug_model) && $blog_slug_model->getKey() !== $blog_model->getKey()) {
             return Inertia::renderVue('Blog/Admin/Edit', [
                 'blog' => $blog_model,
                 'error' => 'Duplicated slug, please choose another one!',
@@ -140,10 +125,10 @@ class AdminController extends Controller
         $blog_model->slug = $request->validated('slug');
         $blog_model->status = $stats->value;
 
-        if ($blog_model->save()){
+        if ($blog_model->save()) {
             $status = 'success';
             $message = 'Update blog post successfully!';
-        }else{
+        } else {
             $status = 'error';
             $message = 'Update blog post error!';
         }
@@ -156,25 +141,27 @@ class AdminController extends Controller
 
     }
 
-    function updateStatus(Request $request){
+    function updateStatus(Request $request)
+    {
         $hash = $request->get('hash');
         $status = $request->get('status');
 
         $blog_model = BlogModel::byHashOrFail($hash);
         $blog_model->status = $status ? BlogStatus::Publish : BlogStatus::Draft;
-        if ($blog_model->save()){
-            return new SuccessJsonResponse([],'Update blog post successfully!');
-        }else{
+        if ($blog_model->save()) {
+            return new SuccessJsonResponse([], 'Update blog post successfully!');
+        } else {
             return new ErrorJsonResponse('Update blog post error!');
         }
     }
 
-    function delete(Request $request){
+    function delete(Request $request)
+    {
         $hash = $request->get('hash');
         $blog_model = BlogModel::byHashOrFail($hash);
-        if ($blog_model->delete()){
-            return new SuccessJsonResponse([],'Delete blog post successfully!');
-        }else{
+        if ($blog_model->delete()) {
+            return new SuccessJsonResponse([], 'Delete blog post successfully!');
+        } else {
             return new ErrorJsonResponse('Delete blog post error!');
         }
     }

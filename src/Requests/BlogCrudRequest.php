@@ -7,6 +7,7 @@ use Brucelwayne\Blog\Enums\BlogStatus;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules\Enum;
+use Mallria\Core\Enums\PostStatus;
 
 class BlogCrudRequest extends FormRequest
 {
@@ -16,12 +17,12 @@ class BlogCrudRequest extends FormRequest
             'title' => ['required', 'max:200'],
             'excerpt' => ['required'],
             'content' => ['required'],
-            'featured_image_url' => ['required'],
+            'image_id' => ['sometimes','required'],
 //            'token' => ['required','max:21'],
             'action' => ['required', Rule::in('create', 'edit')],
             'hash' => ['sometimes', 'max:32'],
             'slug' => ['sometimes', 'required', 'max:190'],
-            'status' => ['required',new Enum(BlogStatus::class)],
+            'status' => ['required',new Enum(PostStatus::class)],
         );
     }
 }
