@@ -30,8 +30,15 @@ class AdminController extends Controller
 //        return view('blog::blog.admin.index', [
 //            'blogs' => $blog_models,
 //        ]);
-        return Inertia::renderVue('Blog/Admin/Index',[
+//        return Inertia::renderVue('Blog/Admin/Index',[
+//            'blogs' => $blog_models,
+//        ]);
+        return Inertia::render('Blog/Admin/List',[
             'blogs' => $blog_models,
+            'aside'=>[
+                'openKeys'=>['blog'],
+                'selectedKeys'=>['blog-posts'],
+            ],
         ]);
     }
 
@@ -59,7 +66,13 @@ class AdminController extends Controller
 //        }
 
 //        return view('blog::blog.admin.create');
-        return Inertia::renderVue('Blog/Admin/Create');
+//        return Inertia::renderVue('Blog/Admin/Create');
+        return Inertia::render('Blog/Admin/Create',[
+            'aside'=>[
+                'openKeys'=>['blog'],
+                'selectedKeys'=>['blog-create'],
+            ],
+        ]);
     }
 
     function store(BlogCrudRequest $request)
@@ -120,7 +133,11 @@ class AdminController extends Controller
         $blog_model->load(['image']);
 
         return Inertia::renderVue('Blog/Admin/Edit',[
-            'blog' => $blog_model
+            'blog' => $blog_model,
+            'aside'=>[
+                'openKeys'=>['blog'],
+                'selectedKeys'=>['blog-create'],
+            ],
         ]);
     }
 
