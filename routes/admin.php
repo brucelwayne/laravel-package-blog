@@ -12,7 +12,7 @@ Route::prefix('admin/blog')->name('admin.blog.')
         //admin index page
         Route::get('/', [AdminController::class, 'index'])->name('index');
 
-        Route::get('single', [AdminController::class, 'single'])->name('single.show');
+//        Route::get('single', [AdminController::class, 'single'])->name('single.show');
 
         Route::get('create', [AdminController::class, 'create'])->name('create.show');
         Route::post('create', [AdminController::class, 'store'])

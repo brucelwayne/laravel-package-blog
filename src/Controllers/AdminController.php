@@ -27,15 +27,18 @@ class AdminController extends Controller
             ->orderBy('id', 'DESC')
             ->paginate(10);
 
-        return view('blog::blog.admin.index', [
+//        return view('blog::blog.admin.index', [
+//            'blogs' => $blog_models,
+//        ]);
+        return Inertia::renderVue('Blog/Admin/Index',[
             'blogs' => $blog_models,
         ]);
     }
 
-    function single(Request $request)
-    {
-        $hash = $request->get('hash');
-    }
+//    function single(Request $request)
+//    {
+//        $hash = $request->get('hash');
+//    }
 
     function create(Request $request)
     {
@@ -55,7 +58,8 @@ class AdminController extends Controller
 //            ]);
 //        }
 
-        return view('blog::blog.admin.create');
+//        return view('blog::blog.admin.create');
+        return Inertia::renderVue('Blog/Admin/Create');
     }
 
     function store(BlogCrudRequest $request)
@@ -109,7 +113,13 @@ class AdminController extends Controller
             return to_route('admin.blog.index');
         }
 
-        return view('blog::blog.admin.edit', [
+//        return view('blog::blog.admin.edit', [
+//            'blog' => $blog_model
+//        ]);
+
+        $blog_model->load(['image']);
+
+        return Inertia::renderVue('Blog/Admin/Edit',[
             'blog' => $blog_model
         ]);
     }
