@@ -143,12 +143,16 @@ class AdminController extends Controller
             }
         }else{
             $slug = BlogFacade::getSlug($request->validated('slug'));
-            $blog_slug_model = BlogModel::bySlug($slug);
-            if (!empty($blog_slug_model) && $blog_slug_model->getKey() !== $blog_model->getKey()) {
-                return redirect()->back()->withInput($request->input())
-                    ->withErrors('Duplicated slug, please choose another one!')
-                    ->with('blog', $blog_model);
-            }
+        }
+        $blog_slug_model = BlogModel::bySlug($slug);
+        if (!empty($blog_slug_model) && $blog_slug_model->getKey() !== $blog_model->getKey()) {
+//            return redirect()->back()->withInput($request->input())
+//                ->withErrors('Duplicated slug, please choose another one!')
+//                ->with('blog', $blog_model);
+            return Inertia::renderVue('Blog/Admin/Edit',[
+                'error' => 'Duplicated slug, please choose another one!',
+                'blog'=>$blog_model,
+            ]);
         }
 
         $image_hash = $request->validated('image');
