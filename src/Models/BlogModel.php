@@ -14,8 +14,24 @@ use Spatie\Translatable\HasTranslations;
 use Veelasky\LaravelHashId\Eloquent\HashableId;
 
 
+/**
+ * @property string url
+ */
 class BlogModel extends PostModel
 {
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+        parent::append(array_merge(parent::getAppends(),[
+            'url',
+        ]));
+    }
+
+    function getUrlAttribute(){
+        return $this->singleUrl();
+    }
+
     public static function boot()
     {
         parent::boot();
