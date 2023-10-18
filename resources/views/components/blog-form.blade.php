@@ -68,7 +68,7 @@ $submitButtonClass = $instance['status'] === \Mallria\Core\Enums\PostStatus::Pub
 
                                 const uploadedResponse = await axios({
                                     method: "POST",
-                                    url: `{{route('admin.blog.file.upload',['blog'=>$instance['hash']])}}`,
+                                    url: `{{route('admin.blog.image.upload',['blog'=>$instance['hash']])}}`,
                                     data: formD,
                                 })
 
@@ -203,7 +203,7 @@ $submitButtonClass = $instance['status'] === \Mallria\Core\Enums\PostStatus::Pub
 
                                             axios({
                                                 method: "POST",
-                                                url: `{{route('admin.blog.file.upload',['blog'=>$instance['hash']])}}`,
+                                                url: `{{route('admin.blog.image.upload',['blog'=>$instance['hash']])}}`,
                                                 data: formD,
                                                 headers: {
                                                     "Content-Type": "multipart/form-data",

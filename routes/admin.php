@@ -31,7 +31,7 @@ Route::prefix('admin/blog')->name('admin.blog.')
 
         Route::get('tags', [AdminController::class, 'index'])->name('tags.show');
 
-        Route::prefix('file')->name('file.')->group(function () {
+        Route::prefix('image')->name('image.')->group(function () {
             Route::post('upload',[MediaController::class,'upload'])->name('upload');
         });
 
