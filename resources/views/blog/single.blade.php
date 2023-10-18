@@ -7,7 +7,7 @@
 
 @php($currentLocale = LaravelLocalization::getCurrentLocale())
 
-@extends('layouts.www',['title'=>$blog->title])
+@extends('layouts.www',['title'=>$blog->title,'canonical'=>$blog->getUrl()])
 
 @section('content')
     <div class="py-10 h-full">

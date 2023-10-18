@@ -271,12 +271,15 @@ class AdminController extends Controller
     function updateStatus(Request $request)
     {
         $hash = $request->get('hash');
-        $status = $request->get('status');
+        $status = $request->post('status');
+        $status = BlogStatus::from($request->post('status'));
 
         $blog_model = BlogModel::byHashOrFail($hash);
-        $blog_model->status = $status ? BlogStatus::Publish : BlogStatus::Draft;
+        $blog_model->status = $status;
         if ($blog_model->save()) {
-            return new SuccessJsonResponse([], 'Update blog post successfully!');
+            return new SuccessJsonResponse([
+                'blog'=>$blog_model,
+            ], 'Update blog post successfully!');
         } else {
             return new ErrorJsonResponse('Update blog post error!');
         }
