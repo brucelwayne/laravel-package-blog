@@ -31,13 +31,11 @@
                                 <a class="text-gray-800 hover:text-blue-600 hover:underline underline-offset-4"
                                         href="{{LaravelLocalization::localizeUrl($blog->getUrl())}}">
                                     <h2 class="text-lg font-medium capitalize">
-                                        @php($title = $blog->getTranslation('title',$currentLocale))
-                                        {{empty($title) ? 'Untitled blog post':$title}}
+                                        {{empty($blog->title) ? 'Untitled blog post':$blog->title}}
                                     </h2>
                                 </a>
                                 <p class="mt-4 font-light text-gray-700">
-                                    @php($excerpt = $blog->getTranslation('excerpt',$currentLocale))
-                                    {{$excerpt}}
+                                    {{$blog->excerpt}}
                                 </p>
                             </div>
                         </div>

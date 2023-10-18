@@ -74,8 +74,7 @@
             <div class="bg-[#00000060] px-10 py-[100px] text-white rounded-t">
                 <div class="blog-single-head text-center">
                     <h1 class="heading text-5xl font-semibold capitalize">
-                        @php($title = $blog->getTranslation('title',$currentLocale))
-                        {{empty($title) ? 'Untitled blog post':$title}}
+                        {{empty($blog->title) ? 'Untitled blog post':$blog->title}}
                     </h1>
                 </div>
                 <div class="blog-single-meta mt-4 text-right text-gray-100">
@@ -85,12 +84,11 @@
         </div>
         <div class="blog-single-content max-w-screen-md mx-auto p-10 bg-white rounded-b">
             <div>
-                @php($excerpt = $blog->getTranslation('excerpt',$currentLocale))
-                {{$excerpt}}
+                {{$blog->excerpt}}
             </div>
             <div class="fr-view">
                 @php($content = $blog->getTranslation('content',$currentLocale))
-                {!! $content !!}
+                {!! $blog->content !!}
             </div>
         </div>
     </div>
