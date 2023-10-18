@@ -50,7 +50,9 @@ use Veelasky\LaravelHashId\Eloquent\HashableId;
  * @method static static withTeam($team_id)
  *
  *  //relations
- * @property MediaModel image
+ * @property MediaModel $image
+ * @property MediaModel $video
+ * @property array<MediaModel> $gallery
  *
  * //attributes
  * @property string url
@@ -68,7 +70,9 @@ class BlogModel extends BaseMysqlModel implements HasMedia
     //region hash id
     protected $hashKey = self::class;
     protected $appends = [
-        'hash'
+        'hash',
+        'url',
+        'gallery',
     ];
 
     public function getRouteKeyName(): string
@@ -107,7 +111,23 @@ class BlogModel extends BaseMysqlModel implements HasMedia
     protected $casts = [
         'type' => BlogType::class,
         'status' => BlogStatus::class,
+        'gallery_ids' => 'array',
     ];
+
+    protected $with = [
+        'image',
+        'video',
+    ];
+
+    //region attributes
+    function getUrlAttribute()
+    {
+        return $this->getUrl();
+    }
+    function getGalleryAttribute(){
+        return $this->getGallery();
+    }
+    //endregion
 
     public function registerMediaConversions($media = null): void
     {
@@ -141,13 +161,20 @@ class BlogModel extends BaseMysqlModel implements HasMedia
         return $this->hasOne(MediaModel::class, 'id', 'image_id');
     }
 
-    //region attributes
-    function getUrlAttribute()
+    public function video()
     {
-        return $this->getUrl();
+        return $this->hasOne(MediaModel::class, 'id', 'video_id');
     }
 
-    //endregion
+    public function getGallery()
+    {
+//        return $this->hasMany(MediaModel::class, 'id', 'gallery_ids');
+
+        if (empty($this->gallery_ids)) {
+            return null;
+        }
+        return MediaModel::whereIn('id', $this->gallery_ids)->orderBy('id', 'asc')->get();
+    }
 
 
 //    public static function bySlug($slug, $team_id = 0)
@@ -172,10 +199,10 @@ class BlogModel extends BaseMysqlModel implements HasMedia
 
     public function getUrl($localCode = null)
     {
-        if (empty($localCode)){
+        if (empty($localCode)) {
             $localCode = LaravelLocalization::getCurrentLocale();
         }
-        $slug = $this->getTranslation('slug',$localCode);
-        return route('blog.single', ['hash' => $this->hash,'slug' => $slug]);
+        $slug = $this->getTranslation('slug', $localCode);
+        return route('blog.single', ['hash' => $this->hash, 'slug' => $slug]);
     }
 }

@@ -226,7 +226,7 @@ class AdminController extends Controller
         })->toArray();
 
         $video_hash = $request->validated('video');
-        $video_id = $image_hash ? MediaModel::hashToId($video_hash) : null;
+        $video_id = $video_hash ? MediaModel::hashToId($video_hash) : null;
 
         $stats = BlogStatus::from($request->validated('status'));
         $type = BlogType::from($request->validated('type'));
@@ -249,7 +249,6 @@ class AdminController extends Controller
         $blog_model->setTranslation('seo_title', $locale, $request->validated('seo_title'));
         $blog_model->setTranslation('seo_keywords', $locale, $request->validated('seo_keywords'));
         $blog_model->setTranslation('seo_description', $locale, $request->validated('seo_description'));
-
 
         if ($blog_model->save()) {
             $status = 'success';
