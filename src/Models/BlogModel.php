@@ -7,8 +7,10 @@ use Brucelwayne\Blog\Enums\BlogType;
 use Mallria\Core\Enums\PostType;
 use Mallria\Core\Models\BaseMysqlModel;
 use Mallria\Media\Models\MediaModel;
+use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
+use Spatie\Sluggable\HasTranslatableSlug;
 use Spatie\Translatable\HasTranslations;
 use Veelasky\LaravelHashId\Eloquent\HashableId;
 
@@ -29,11 +31,12 @@ use Veelasky\LaravelHashId\Eloquent\HashableId;
  * @property BlogStatus status
  * @property string title
  * @property string slug
+ * @property string locale
  * @property string excerpt
  * @property string content
  * @property string seo_title
  * @property string seo_keywords
- * @property string seo_content
+ * @property string seo_description
  *
  * @method static static create(...$args)
  * @method static static first()
@@ -60,7 +63,7 @@ class BlogModel extends BaseMysqlModel implements HasMedia
 
     protected $table = 'blogs';
 
-    public $translatable = ['title', 'excerpt', 'content', 'seo_title', 'seo_keywords', 'seo_description'];
+    public $translatable = ['slug', 'title', 'excerpt', 'content', 'seo_title', 'seo_keywords', 'seo_description'];
 
     //region hash id
     protected $hashKey = self::class;
@@ -81,16 +84,21 @@ class BlogModel extends BaseMysqlModel implements HasMedia
         'team_id',
         'creator_id',
         'author_id',
-        'type',
         'cate_id',
+
+        'type',
         'status',
-        'title',
         'slug',
+        'locale',
+
+        'title',
         'excerpt',
         'content',
+
         'seo_title',
         'seo_keywords',
         'seo_content',
+
         'image_id',
         'gallery_ids',
         'video_id',
@@ -142,19 +150,19 @@ class BlogModel extends BaseMysqlModel implements HasMedia
     //endregion
 
 
-    public static function bySlug($slug, $team_id = 0)
-    {
-        return static::where('slug', $slug)
-            ->withTeam(0)
-            ->first();
-    }
-
-    public static function bySlugOrFail($slug, $team_id = 0)
-    {
-        return static::where('slug', $slug)
-            ->withTeam(0)
-            ->firstOrFail();
-    }
+//    public static function bySlug($slug, $team_id = 0)
+//    {
+//        return static::where('slug', $slug)
+//            ->withTeam(0)
+//            ->first();
+//    }
+//
+//    public static function bySlugOrFail($slug, $team_id = 0)
+//    {
+//        return static::where('slug', $slug)
+//            ->withTeam(0)
+//            ->firstOrFail();
+//    }
 
     public static function byId($id)
     {
@@ -162,12 +170,12 @@ class BlogModel extends BaseMysqlModel implements HasMedia
             ->first();
     }
 
-    public function getUrl()
+    public function getUrl($localCode = null)
     {
-        if (empty($this->slug)) {
-            return route('blog.single.hash', ['hash' => $this->hash]);
-        } else {
-            return route('blog.single.slug', ['slug' => $this->slug]);
+        if (empty($localCode)){
+            $localCode = LaravelLocalization::getCurrentLocale();
         }
+        $slug = $this->getTranslation('slug',$localCode);
+        return route('blog.single', ['hash' => $this->hash,'slug' => $slug]);
     }
 }

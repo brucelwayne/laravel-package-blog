@@ -9,20 +9,19 @@ use Illuminate\Http\Request;
 class BlogController extends Controller
 {
 
-    function singleByHash(Request $request){
-        $hash = $request->get('hash');
+    function singleByHash($hash, string $slug = ''){
         $blog_model = BlogModel::byHashOrFail($hash);
         return view('blog::blog.single', [
             'blog' => $blog_model,
         ]);
     }
 
-    function singleBySlug($slug, Request $request)
+    function singleBySlug($hash, $slug, Request $request)
     {
-        $blog_model = BlogModel::bySlugOrFail($slug);
-        return view('blog::blog.single', [
-            'blog' => $blog_model,
-        ]);
+//        $blog_model = BlogModel::bySlugOrFail($slug);
+//        return view('blog::blog.single', [
+//            'blog' => $blog_model,
+//        ]);
     }
 
     function index()

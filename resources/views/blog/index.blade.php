@@ -1,15 +1,26 @@
+<?php
+    use \Mcamara\LaravelLocalization\Facades\LaravelLocalization;
+/**
+ * @var \Brucelwayne\Blog\Models\BlogModel $blog
+ */
+?>
+@php($currentLocale = LaravelLocalization::getCurrentLocale())
+
 @extends('layouts.www',['title'=>'Blog'])
 
 @section('content')
+
+
     <div class="blogs py-10 flex-1 h-full">
         <div class="max-w-screen-md mx-auto space-y-4">
             @if(!empty($blogs))
+
                 @foreach($blogs as $blog)
                     <section class="bg-white rounded shadow p-6">
                         <div class="flex flex-row justify-start items-start">
                             <div class="w-1/2">
                                 <a class="relative group"
-                                        href="{{\Mcamara\LaravelLocalization\Facades\LaravelLocalization::localizeUrl($blog->singleUrl())}}">
+                                        href="{{LaravelLocalization::localizeUrl($blog->getUrl())}}">
                                     @if(!empty($blog['image']['url']))
                                         <img class="rounded-lg" src="{{$blog['image']['url']}}" alt="{{$blog->title}}"/>
                                     @endif
@@ -18,13 +29,15 @@
                             </div>
                             <div class="px-6">
                                 <a class="text-gray-800 hover:text-blue-600 hover:underline underline-offset-4"
-                                        href="{{\Mcamara\LaravelLocalization\Facades\LaravelLocalization::localizeUrl($blog->singleUrl())}}">
+                                        href="{{LaravelLocalization::localizeUrl($blog->getUrl())}}">
                                     <h2 class="text-lg font-medium capitalize">
-                                        {{$blog['title'] ?? 'Untitled blog post'}}
+                                        @php($title = $blog->getTranslation('title',$currentLocale))
+                                        {{empty($title) ? 'Untitled blog post':$title}}
                                     </h2>
                                 </a>
                                 <p class="mt-4 font-light text-gray-700">
-                                    {{$blog['excerpt']}}
+                                    @php($excerpt = $blog->getTranslation('excerpt',$currentLocale))
+                                    {{$excerpt}}
                                 </p>
                             </div>
                         </div>

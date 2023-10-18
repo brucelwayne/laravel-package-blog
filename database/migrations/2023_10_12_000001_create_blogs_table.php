@@ -20,7 +20,7 @@ return new class extends Migration {
             $table->integer('creator_id')->index();
             $table->integer('author_id')->default(0)->index();
 
-            $table->string('local')->default(config('app.locale'))->index();
+            $table->string('locale')->default(config('app.locale'))->index();
             $table->string('type')->default(BlogType::Classic->value)->index();
             $table->string('status')->default(BlogStatus::Draft->value)->index();
 
@@ -32,13 +32,13 @@ return new class extends Migration {
 
             $table->string('slug')->nullable()->index();
 
-            $table->text('title')->nullable();
-            $table->text('excerpt')->nullable();
-            $table->text('content')->nullable();
+            $table->longText('title')->nullable();
+            $table->longText('excerpt')->nullable();
+            $table->longText('content')->nullable();
 
-            $table->text('seo_title')->nullable();
-            $table->text('seo_keywords')->nullable();
-            $table->text('seo_description')->nullable();
+            $table->longText('seo_title')->nullable();
+            $table->longText('seo_keywords')->nullable();
+            $table->longText('seo_description')->nullable();
 
             $table->timestamps();
 

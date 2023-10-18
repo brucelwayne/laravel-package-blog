@@ -1,3 +1,12 @@
+<?php
+    use \Mcamara\LaravelLocalization\Facades\LaravelLocalization
+    /**
+     * @var \Brucelwayne\Blog\Models\BlogModel $blog
+     */
+?>
+
+@php($currentLocale = LaravelLocalization::getCurrentLocale())
+
 @extends('layouts.www',['title'=>$blog->title])
 
 @section('content')
@@ -19,7 +28,7 @@
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
                                       stroke-width="2" d="m1 9 4-4-4-4"/>
                             </svg>
-                            <a href="{{\Mcamara\LaravelLocalization\Facades\LaravelLocalization::localizeUrl(route('blog.index'))}}"
+                            <a href="{{LaravelLocalization::localizeUrl(route('blog.index'))}}"
                                class="ml-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ml-2 dark:text-gray-400 dark:hover:text-white">
                                 Blog
                             </a>
@@ -31,7 +40,7 @@
                 <button data-dropdown-toggle="language-dropdown"
                         class="text-gray-600 font-medium rounded-lg text-sm px-5 py-2.5 text-center inline-flex items-center "
                         type="button">
-                    {{\Mcamara\LaravelLocalization\Facades\LaravelLocalization::getCurrentLocaleNative()}}
+                    {{LaravelLocalization::getCurrentLocaleNative()}}
                     <svg class="w-2.5 h-2.5 ml-2.5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
                          viewBox="0 0 10 6">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -47,7 +56,7 @@
                             <li>
                                 <a rel="alternate" hreflang="{{ $localeCode }}"
                                    class="capitalize whitespace-nowrap block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                                   href="{{ \Mcamara\LaravelLocalization\Facades\LaravelLocalization::getLocalizedURL($localeCode, null, [], true) }}">
+                                   href="{{LaravelLocalization::getLocalizedURL($localeCode, $blog->getUrl($localeCode), [], true) }}">
                                     {{ $properties['native'] }}
                                 </a>
                             </li>
@@ -65,7 +74,8 @@
             <div class="bg-[#00000060] px-10 py-[100px] text-white rounded-t">
                 <div class="blog-single-head text-center">
                     <h1 class="heading text-5xl font-semibold capitalize">
-                        {{$blog['title'] ?? 'Untitled blog post'}}
+                        @php($title = $blog->getTranslation('title',$currentLocale))
+                        {{empty($title) ? 'Untitled blog post':$title}}
                     </h1>
                 </div>
                 <div class="blog-single-meta mt-4 text-right text-gray-100">
@@ -75,10 +85,12 @@
         </div>
         <div class="blog-single-content max-w-screen-md mx-auto p-10 bg-white rounded-b">
             <div>
-                {{$blog->excerpt}}
+                @php($excerpt = $blog->getTranslation('excerpt',$currentLocale))
+                {{$excerpt}}
             </div>
             <div class="fr-view">
-                {!! $blog->content !!}
+                @php($content = $blog->getTranslation('content',$currentLocale))
+                {!! $content !!}
             </div>
         </div>
     </div>

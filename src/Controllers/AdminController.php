@@ -19,6 +19,7 @@ use Mallria\Core\Facades\NanoIdFacade;
 use Mallria\Core\Http\Responses\ErrorJsonResponse;
 use Mallria\Core\Http\Responses\SuccessJsonResponse;
 use Mallria\Media\Models\MediaModel;
+use Mallria\Wordpress\WP\Resources\Media;
 
 class AdminController extends Controller
 {
@@ -34,7 +35,7 @@ class AdminController extends Controller
 //        return Inertia::renderVue('Blog/Admin/Index',[
 //            'blogs' => $blog_models,
 //        ]);
-        return Inertia::render('Blog/Admin/List', [
+        return Inertia::render('Blog/Admin/BlogList', [
             'blogs' => $blog_models,
             'aside' => [
                 'openKeys' => ['blog'],
@@ -68,7 +69,7 @@ class AdminController extends Controller
 
 //        return view('blog::blog.admin.create');
 //        return Inertia::renderVue('Blog/Admin/Create');
-        return Inertia::render('Blog/Admin/Create', [
+        return Inertia::render('Blog/Admin/CreateBlog', [
             'aside' => [
                 'openKeys' => ['blog'],
                 'selectedKeys' => ['blog-create'],
@@ -85,11 +86,11 @@ class AdminController extends Controller
 
         $slug = BlogFacade::getSlug($request->validated('title'));
 
-        $blog_slug_model = BlogModel::bySlug($slug);
-        //如果slug不存在
-        if (!empty($blog_slug_model)) {
-            $slug = $slug . '-' . NanoIdFacade::generate();
-        }
+//        $blog_slug_model = BlogModel::bySlug($slug);
+//        //如果slug不存在
+//        if (!empty($blog_slug_model)) {
+//            $slug = $slug . '-' . NanoIdFacade::generate();
+//        }
 
         /**
          * @var AdminModel $admin
@@ -105,30 +106,57 @@ class AdminController extends Controller
             return MediaModel::hashToId($g);
         })->toArray();
 
-        $blog_model = BlogModel::create([
-            'team_id' => 0,//system blog is 0
-            'creator_id' => $admin->getKey(),
-            'author_id' => $admin->getKey(),
-            'cate_id' => 0, // no category for now
+//        $blog_model = BlogModel::create([
+//            'team_id' => 0,//system blog is 0
+//            'creator_id' => $admin->getKey(),
+//            'author_id' => $admin->getKey(),
+//            'cate_id' => 0, // no category for now
+//
+//            'status' => $stats->value,
+//            'type' => $type->value,
+//            'locale' => $request->validated('locale'),
+//
+//            'slug' => $slug,
+//            'title' => $request->validated('title'),
+//            'excerpt' => $request->validated('excerpt'),
+//            'content' => $request->validated('content'),
+//
+//            'seo_title' => $request->validated('seo_title'),
+//            'seo_keywords' => $request->validated('seo_keywords'),
+//            'seo_description' => $request->validated('seo_description'),
+//
+//            'image_id' => $image_id,
+//            'gallery_ids' => $gallery_ids,
+//            'video_id' => $video_id,
+//        ]);
 
-            'status' => $stats->value,
-            'type' => $type->value,
-            'locale' => $request->validated('locale'),
+        $locale = $request->validated('locale');
 
-            'slug' => $slug,
-            'title' => $request->validated('title'),
-            'excerpt' => $request->validated('excerpt'),
-            'content' => $request->validated('content'),
+        $blog_model = new BlogModel();
 
-            'seo_title' => $request->validated('seo_title'),
-            'seo_keywords' => $request->validated('seo_keywords'),
-            'seo_description' => $request->validated('seo_description'),
+        $blog_model->team_id = 0;
+        $blog_model->creator_id = $admin->getKey();
+        $blog_model->author_id = $admin->getKey();
+        $blog_model->cate_id = 0;
 
-            'image_id' => $image_id,
-            'gallery_ids' => $gallery_ids,
-            'video_id' => $video_id,
-        ]);
 
+        $blog_model->type = $type;
+        $blog_model->status = $stats->value;
+        $blog_model->locale = $locale;
+
+        $blog_model->image_id = $image_id;
+        $blog_model->gallery_ids = $gallery_ids;
+        $blog_model->video_id = $video_id;
+
+        $blog_model->setTranslation('slug', $locale, $slug);
+        $blog_model->setTranslation('title', $locale, $request->validated('title'));
+        $blog_model->setTranslation('excerpt', $locale, $request->validated('excerpt'));
+        $blog_model->setTranslation('content', $locale, $request->validated('content'));
+
+        $blog_model->setTranslation('seo_title', $locale, $request->validated('seo_title'));
+        $blog_model->setTranslation('seo_keywords', $locale, $request->validated('seo_keywords'));
+        $blog_model->setTranslation('seo_description', $locale, $request->validated('seo_description'));
+        $blog_model->save();
 
         return to_route('admin.blog.edit.show', [
             'hash' => $blog_model->hash,
@@ -150,7 +178,7 @@ class AdminController extends Controller
 
         $blog_model->load(['image']);
 
-        return Inertia::renderVue('Blog/Admin/Edit', [
+        return Inertia::render('Blog/Admin/EditBlog', [
             'blog' => $blog_model,
             'aside' => [
                 'openKeys' => ['blog'],
@@ -179,30 +207,49 @@ class AdminController extends Controller
         } else {
             $slug = BlogFacade::getSlug($request->validated('slug'));
         }
-        $blog_slug_model = BlogModel::bySlug($slug);
-        if (!empty($blog_slug_model) && $blog_slug_model->getKey() !== $blog_model->getKey()) {
-//            return redirect()->back()->withInput($request->input())
-//                ->withErrors('Duplicated slug, please choose another one!')
-//                ->with('blog', $blog_model);
-            return Inertia::renderVue('Blog/Admin/Edit', [
-                'error' => 'Duplicated slug, please choose another one!',
-                'blog' => $blog_model,
-            ]);
-        }
+//        $blog_slug_model = BlogModel::bySlug($slug);
+//        if (!empty($blog_slug_model) && $blog_slug_model->getKey() !== $blog_model->getKey()) {
+////            return redirect()->back()->withInput($request->input())
+////                ->withErrors('Duplicated slug, please choose another one!')
+////                ->with('blog', $blog_model);
+//            return Inertia::render('Blog/Admin/EditBlog', [
+//                'error' => 'Duplicated slug, please choose another one!',
+//                'blog' => $blog_model,
+//            ]);
+//        }
 
         $image_hash = $request->validated('image');
-        if (!empty($image_hash)) {
-            $media_model = MediaModel::byHash($image_hash);
-        }
+        $image_id = $image_hash ? MediaModel::hashToId($image_hash) : null;
+
+        $gallery_ids = empty($request->validated('gallery')) ? null : collect($request->validated('gallery'))->map(function ($g) {
+            return MediaModel::hashToId($g);
+        })->toArray();
+
+        $video_hash = $request->validated('video');
+        $video_id = $image_hash ? MediaModel::hashToId($video_hash) : null;
 
         $stats = BlogStatus::from($request->validated('status'));
+        $type = BlogType::from($request->validated('type'));
 
-        $blog_model->title = $title;
-        $blog_model->excerpt = $request->validated('excerpt');
-        $blog_model->content = $request->validated('content');
-        $blog_model->slug = $slug;
+        $locale = $request->validated('locale');
+
+        $blog_model->type = $type;
         $blog_model->status = $stats->value;
-        $blog_model->image_id = empty($media_model) ? 0 : $media_model->getKey();
+        $blog_model->locale = $locale;
+
+        $blog_model->image_id = $image_id;
+        $blog_model->gallery_ids = $gallery_ids;
+        $blog_model->video_id = $video_id;
+
+        $blog_model->setTranslation('slug', $locale, $slug);
+        $blog_model->setTranslation('title', $locale, $request->validated('title'));
+        $blog_model->setTranslation('excerpt', $locale, $request->validated('excerpt'));
+        $blog_model->setTranslation('content', $locale, $request->validated('content'));
+
+        $blog_model->setTranslation('seo_title', $locale, $request->validated('seo_title'));
+        $blog_model->setTranslation('seo_keywords', $locale, $request->validated('seo_keywords'));
+        $blog_model->setTranslation('seo_description', $locale, $request->validated('seo_description'));
+
 
         if ($blog_model->save()) {
             $status = 'success';
