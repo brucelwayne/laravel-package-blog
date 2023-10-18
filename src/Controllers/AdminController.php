@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Brucelwayne\Admin\Models\AdminModel;
 use Brucelwayne\Blog\Enums\BlogCrudActions;
 use Brucelwayne\Blog\Enums\BlogStatus;
+use Brucelwayne\Blog\Enums\BlogType;
 use Brucelwayne\Blog\Facades\BlogFacade;
 use Brucelwayne\Blog\Models\BlogModel;
 use Brucelwayne\Blog\Requests\BlogCrudRequest;
@@ -33,11 +34,11 @@ class AdminController extends Controller
 //        return Inertia::renderVue('Blog/Admin/Index',[
 //            'blogs' => $blog_models,
 //        ]);
-        return Inertia::render('Blog/Admin/List',[
+        return Inertia::render('Blog/Admin/List', [
             'blogs' => $blog_models,
-            'aside'=>[
-                'openKeys'=>['blog'],
-                'selectedKeys'=>['blog-posts'],
+            'aside' => [
+                'openKeys' => ['blog'],
+                'selectedKeys' => ['blog-posts'],
             ],
         ]);
     }
@@ -67,10 +68,10 @@ class AdminController extends Controller
 
 //        return view('blog::blog.admin.create');
 //        return Inertia::renderVue('Blog/Admin/Create');
-        return Inertia::render('Blog/Admin/Create',[
-            'aside'=>[
-                'openKeys'=>['blog'],
-                'selectedKeys'=>['blog-create'],
+        return Inertia::render('Blog/Admin/Create', [
+            'aside' => [
+                'openKeys' => ['blog'],
+                'selectedKeys' => ['blog-create'],
             ],
         ]);
     }
@@ -95,20 +96,37 @@ class AdminController extends Controller
          */
         $admin = Auth::guard('admin')->user();
 
-        $stats = PostStatus::from($request->validated('status'));
+        $stats = BlogStatus::from($request->validated('status'));
+        $type = BlogType::from($request->validated('type'));
+
+        $image_id = empty($request->validated('image')) ? null : MediaModel::hashToId($request->validated('image'));
+        $video_id = empty($request->validated('video')) ? null : MediaModel::hashToId($request->validated('video'));
+        $gallery_ids = empty($request->validated('gallery')) ? null : collect($request->validated('gallery'))->map(function ($g) {
+            return MediaModel::hashToId($g);
+        })->toArray();
 
         $blog_model = BlogModel::create([
             'team_id' => 0,//system blog is 0
             'creator_id' => $admin->getKey(),
             'author_id' => $admin->getKey(),
-            'cate_id' => 0, // no category
+            'cate_id' => 0, // no category for now
+
             'status' => $stats->value,
-            'image_id' => $request->validated('image_id'),
+            'type' => $type->value,
+            'locale' => $request->validated('locale'),
+
             'slug' => $slug,
             'title' => $request->validated('title'),
             'excerpt' => $request->validated('excerpt'),
             'content' => $request->validated('content'),
-            'token' => $request->validated('token'),
+
+            'seo_title' => $request->validated('seo_title'),
+            'seo_keywords' => $request->validated('seo_keywords'),
+            'seo_description' => $request->validated('seo_description'),
+
+            'image_id' => $image_id,
+            'gallery_ids' => $gallery_ids,
+            'video_id' => $video_id,
         ]);
 
 
@@ -132,11 +150,11 @@ class AdminController extends Controller
 
         $blog_model->load(['image']);
 
-        return Inertia::renderVue('Blog/Admin/Edit',[
+        return Inertia::renderVue('Blog/Admin/Edit', [
             'blog' => $blog_model,
-            'aside'=>[
-                'openKeys'=>['blog'],
-                'selectedKeys'=>['blog-create'],
+            'aside' => [
+                'openKeys' => ['blog'],
+                'selectedKeys' => ['blog-create'],
             ],
         ]);
     }
@@ -155,10 +173,10 @@ class AdminController extends Controller
         $title = $request->validated('title');
         $slug = $request->validated('slug');
         if (empty($slug)) {
-            if (!empty($title)){
+            if (!empty($title)) {
                 $slug = BlogFacade::getSlug($title);
             }
-        }else{
+        } else {
             $slug = BlogFacade::getSlug($request->validated('slug'));
         }
         $blog_slug_model = BlogModel::bySlug($slug);
@@ -166,14 +184,14 @@ class AdminController extends Controller
 //            return redirect()->back()->withInput($request->input())
 //                ->withErrors('Duplicated slug, please choose another one!')
 //                ->with('blog', $blog_model);
-            return Inertia::renderVue('Blog/Admin/Edit',[
+            return Inertia::renderVue('Blog/Admin/Edit', [
                 'error' => 'Duplicated slug, please choose another one!',
-                'blog'=>$blog_model,
+                'blog' => $blog_model,
             ]);
         }
 
         $image_hash = $request->validated('image');
-        if (!empty($image_hash)){
+        if (!empty($image_hash)) {
             $media_model = MediaModel::byHash($image_hash);
         }
 
