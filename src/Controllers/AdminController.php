@@ -271,7 +271,6 @@ class AdminController extends Controller
     function updateStatus(Request $request)
     {
         $hash = $request->get('hash');
-        $status = $request->post('status');
         $status = BlogStatus::from($request->post('status'));
 
         $blog_model = BlogModel::byHashOrFail($hash);
