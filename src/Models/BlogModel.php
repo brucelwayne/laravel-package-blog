@@ -24,7 +24,7 @@ use Veelasky\LaravelHashId\Eloquent\HashableId;
  * @property BlogType type
  *
  * @property integer image_id The cover of this blog
- * @property integer gallery_ids
+ * @property array gallery_ids
  * @property integer video_id
  *
  * @property integer cate_id
@@ -73,6 +73,7 @@ class BlogModel extends BaseMysqlModel implements HasMedia
         'hash',
         'url',
         'gallery',
+        'gallery_hash_ids',
     ];
 
     public function getRouteKeyName(): string
@@ -124,9 +125,23 @@ class BlogModel extends BaseMysqlModel implements HasMedia
     {
         return $this->getUrl();
     }
-    function getGalleryAttribute(){
+
+    function getGalleryAttribute()
+    {
         return $this->getGallery();
     }
+
+    function getGalleryHashIdsAttribute()
+    {
+        $gallery = $this->getGallery();
+        if (!empty($gallery)) {
+            return collect($gallery)->map(function ($g) {
+                return $g->hash;
+            });
+        }
+        return [];
+    }
+
     //endregion
 
     public function registerMediaConversions($media = null): void
@@ -173,7 +188,14 @@ class BlogModel extends BaseMysqlModel implements HasMedia
         if (empty($this->gallery_ids)) {
             return null;
         }
-        return MediaModel::whereIn('id', $this->gallery_ids)->orderBy('id', 'asc')->get();
+        $gallery_models = MediaModel::whereIn('id', $this->gallery_ids)->orderBy('id', 'asc')->get();
+        $gallery = [];
+        foreach ($this->gallery_ids as $gallery_id) {
+            $gallery[] = collect($gallery_models)->first(function($gallery_model) use ($gallery_id){
+                return $gallery_model->getKey() === $gallery_id;
+            });
+        }
+        return $gallery;
     }
 
 

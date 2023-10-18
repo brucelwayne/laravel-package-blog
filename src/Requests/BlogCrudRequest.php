@@ -38,9 +38,9 @@ class BlogCrudRequest extends FormRequest
             'seo_description' => ['sometimes',],
 
 
-            'image' => ['sometimes', 'max:32'],//hash
-            'gallery' => ['sometimes', 'array', 'max:12'],//hash
-            'video' => ['sometimes', 'max:32'],//hash
+            'image_id' => ['sometimes', 'max:32'],//hash
+            'gallery_ids' => ['sometimes', 'array', 'max:12'],//hash
+            'video_id' => ['sometimes', 'max:32'],//hash
         );
     }
 }

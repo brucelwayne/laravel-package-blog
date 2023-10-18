@@ -100,9 +100,9 @@ class AdminController extends Controller
         $stats = BlogStatus::from($request->validated('status'));
         $type = BlogType::from($request->validated('type'));
 
-        $image_id = empty($request->validated('image')) ? null : MediaModel::hashToId($request->validated('image'));
-        $video_id = empty($request->validated('video')) ? null : MediaModel::hashToId($request->validated('video'));
-        $gallery_ids = empty($request->validated('gallery')) ? null : collect($request->validated('gallery'))->map(function ($g) {
+        $image_id = empty($request->validated('image_id')) ? null : MediaModel::hashToId($request->validated('image_id'));
+        $video_id = empty($request->validated('video_id')) ? null : MediaModel::hashToId($request->validated('video_id'));
+        $gallery_ids = empty($request->validated('gallery_ids')) ? null : collect($request->validated('gallery_ids'))->map(function ($g) {
             return MediaModel::hashToId($g);
         })->toArray();
 
@@ -218,14 +218,14 @@ class AdminController extends Controller
 //            ]);
 //        }
 
-        $image_hash = $request->validated('image');
+        $image_hash = $request->validated('image_id');
         $image_id = $image_hash ? MediaModel::hashToId($image_hash) : null;
 
-        $gallery_ids = empty($request->validated('gallery')) ? null : collect($request->validated('gallery'))->map(function ($g) {
+        $gallery_ids = empty($request->validated('gallery_ids')) ? null : collect($request->validated('gallery_ids'))->map(function ($g) {
             return MediaModel::hashToId($g);
         })->toArray();
 
-        $video_hash = $request->validated('video');
+        $video_hash = $request->validated('video_id');
         $video_id = $video_hash ? MediaModel::hashToId($video_hash) : null;
 
         $stats = BlogStatus::from($request->validated('status'));
