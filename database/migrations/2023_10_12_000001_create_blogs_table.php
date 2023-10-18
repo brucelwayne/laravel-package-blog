@@ -30,7 +30,7 @@ return new class extends Migration {
             $table->text('gallery_ids')->nullable();
             $table->integer('video_id')->nullable();
 
-            $table->string('slug')->nullable()->index();
+            $table->longText('slug')->nullable();
 
             $table->longText('title')->nullable();
             $table->longText('excerpt')->nullable();
