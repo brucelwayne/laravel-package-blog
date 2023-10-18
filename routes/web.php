@@ -10,10 +10,10 @@ use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 Route::middleware(['web', 'localizationRedirect'])
     ->prefix(LaravelLocalization::setLocale())
     ->group(function () {
-        Route::get('blog', [BlogController::class, 'index'])->name('blog.index');
-//        Route::get('blog/page/{page?}',[BlogController::class, 'index'])->where('page','[1-9]+[0-9]*');
-        Route::get('blog/{hash}/{slug?}', [BlogController::class, 'singleByHash'])->name('blog.single');
-//        Route::get('blog/post/{hash}/{slug}', [BlogController::class, 'singleBySlug'])
-//            ->name('blog.single.slug')
-//            ->where('slug', '[a-zA-Z0-9-]+');
+        Route::prefix('blog')->group(function(){
+            Route::get('/', [BlogController::class, 'index'])->name('blog.index');
+            Route::get('{hash}/{slug?}', [BlogController::class, 'singleByHash'])->name('blog.single')
+                ->where('hash','[a-zA-Z0-9-]+')
+                ->where('slug','[a-zA-Z0-9-]+');
+        });
     });
