@@ -27,7 +27,7 @@ class AdminController extends Controller
     {
         $blog_models = BlogModel::where('team_id', 0)
             ->orderBy('id', 'DESC')
-            ->paginate(10);
+            ->paginate(30);
 
 //        return view('blog::blog.admin.index', [
 //            'blogs' => $blog_models,
