@@ -1,5 +1,6 @@
 <?php
-    use \Mcamara\LaravelLocalization\Facades\LaravelLocalization
+
+use \Mcamara\LaravelLocalization\Facades\LaravelLocalization
     /**
      * @var \Brucelwayne\Blog\Models\BlogModel $blog
      */
@@ -10,7 +11,7 @@
 @extends('layouts.www',['title'=>$blog->title,'canonical'=>$blog->getUrl()])
 
 @section('content')
-    <div class="py-10 h-full">
+    <div class="blog-single py-10 h-full">
 
         <div class="max-w-screen-md mx-auto mb-4 px-6 flex flex-row justify-between items-center">
             <nav class="flex" aria-label="Breadcrumb">
@@ -66,22 +67,46 @@
             </div>
         </div>
 
-        <div style="
         @if(!empty($blog['image']['url']))
+            <div style="
         background-image:url('{{$blog['image']['url']}}');
-        @endif
         " class="bg-no-repeat bg-cover bg-center max-w-screen-md mx-auto rounded">
-            <div class="bg-[#00000060] px-10 py-[100px] text-white rounded-t">
-                <div class="blog-single-head text-center">
-                    <h1 class="heading text-5xl font-semibold capitalize">
-                        {{empty($blog->title) ? 'Untitled blog post':$blog->title}}
-                    </h1>
-                </div>
-                <div class="blog-single-meta mt-4 text-right text-gray-100">
-                    {{\Carbon\Carbon::parse($blog->updated_at)->toFormattedDateString()}}
+                <div class="bg-[#00000060] px-10 py-[100px] text-white rounded-t">
+                    <div class="blog-single-head text-center">
+                        <h1 class="heading text-5xl font-semibold capitalize">
+                            {{empty($blog->title) ? 'Untitled blog post':$blog->title}}
+                        </h1>
+                    </div>
+                    <div class="blog-single-meta mt-4 text-right text-gray-100">
+                        <ul class="list-none flex flex-row justify-end items-center space-x-4">
+                            <li>
+                                {{read_time($blog->content)}}
+                            </li>
+                            <li>
+                                {{\Carbon\Carbon::parse($blog->updated_at)->toDateString()}}
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </div>
-        </div>
+        @else
+            <div class="max-w-screen-md mx-auto mb-10 text-center px-10">
+                <h1 class="heading text-5xl font-semibold">
+                    {{empty($blog->title) ? 'Untitled blog post':$blog->title}}
+                </h1>
+                <div class="blog-single-meta mt-4 text-right text-gray-700">
+                    <ul class="list-none flex flex-row justify-end items-center space-x-4">
+                        <li>
+                            {{read_time($blog->content)}}
+                        </li>
+                        <li>
+                            {{\Carbon\Carbon::parse($blog->updated_at)->toDateString()}}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        @endif
+
         <div class="blog-single-content max-w-screen-md mx-auto p-10 bg-white rounded-b">
             <div>
                 {{$blog->excerpt}}

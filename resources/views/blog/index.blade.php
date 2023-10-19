@@ -30,7 +30,7 @@
                             <div class="px-6">
                                 <a class="text-gray-800 hover:text-blue-600 hover:underline underline-offset-4"
                                         href="{{LaravelLocalization::localizeUrl($blog->getUrl())}}">
-                                    <h2 class="text-lg font-medium capitalize">
+                                    <h2 class="text-lg font-medium">
                                         {{empty($blog->title) ? 'Untitled blog post':$blog->title}}
                                     </h2>
                                 </a>

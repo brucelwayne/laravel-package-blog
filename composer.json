@@ -21,7 +21,8 @@
         "ausi/slug-generator": "^1.1",
         "spatie/laravel-permission": "^5.9",
         "jimmiw/php-time-ago": "^3.2",
-        "laravel/scout": "^10.0"
+        "laravel/scout": "^10.0",
+        "mtownsend/read-time": "^2.0"
     },
     "require-dev": {
     },
