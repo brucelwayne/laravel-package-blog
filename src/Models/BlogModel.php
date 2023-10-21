@@ -79,6 +79,7 @@ class BlogModel extends BaseMysqlModel implements HasMedia
         'url',
         'gallery',
         'gallery_hash_ids',
+        'seo',
     ];
 
     public function getRouteKeyName(): string

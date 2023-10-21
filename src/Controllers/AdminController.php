@@ -10,7 +10,7 @@ use Brucelwayne\Blog\Enums\BlogType;
 use Brucelwayne\Blog\Facades\BlogFacade;
 use Brucelwayne\Blog\Models\BlogModel;
 use Brucelwayne\Blog\Requests\BlogCrudRequest;
-use Brucelwayne\SEO\SeoType;
+use Brucelwayne\SEO\Enums\SeoType;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
