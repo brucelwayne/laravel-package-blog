@@ -231,9 +231,12 @@ class AdminController extends Controller
 //            ]);
 //        }
 
+        $image_id= null;
         $image_hash = $request->validated('image_id');
-        $media = MediaModel::byHashOrFail($image_hash);
-        $image_id = $image_hash ? MediaModel::hashToId($image_hash) : null;
+        if (!empty($image_hash)){
+            $media = MediaModel::byHashOrFail($image_hash);
+            $image_id = MediaModel::hashToId($image_hash);
+        }
 
         $gallery_ids = empty($request->validated('gallery_ids')) ? null : collect($request->validated('gallery_ids'))->map(function ($g) {
             return MediaModel::hashToId($g);
@@ -265,7 +268,7 @@ class AdminController extends Controller
 //        $blog_model->setTranslation('seo_description', $locale, $request->validated('seo_description'));
 
         $blog_model->seo()->setType(SeoType::Article);
-        $blog_model->seo()->setImageUrl($media->original_url);
+        $blog_model->seo()->setImageUrl(empty($media) ? '' : $media->original_url);
         $blog_model->seo()->setUrl($blog_model->getUrl($locale));
         $blog_model->seo()->setCanonical($blog_model->getUrl($locale));
         $blog_model->seo()->setTitle($request->validated('seo_title'),$locale);
