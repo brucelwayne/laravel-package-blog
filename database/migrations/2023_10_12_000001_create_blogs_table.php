@@ -15,7 +15,7 @@ return new class extends Migration {
             /**
              * @var Illuminate\Database\Schema\Blueprint|MongoDB\Laravel\Schema\Blueprint $table
              */
-            $table->increments('id');
+            $table->id();
             $table->integer('team_id')->default(0)->index();
             $table->integer('creator_id')->index();
             $table->integer('author_id')->default(0)->index();
@@ -35,10 +35,6 @@ return new class extends Migration {
             $table->longText('title')->nullable();
             $table->longText('excerpt')->nullable();
             $table->longText('content')->nullable();
-
-            $table->longText('seo_title')->nullable();
-            $table->longText('seo_keywords')->nullable();
-            $table->longText('seo_description')->nullable();
 
             $table->timestamps();
 

@@ -4,6 +4,7 @@ namespace Brucelwayne\Blog\Models;
 
 use Brucelwayne\Blog\Enums\BlogStatus;
 use Brucelwayne\Blog\Enums\BlogType;
+use Brucelwayne\SEO\Traits\HasSeo;
 use Mallria\Core\Enums\PostType;
 use Mallria\Core\Models\BaseMysqlModel;
 use Mallria\Media\Models\MediaModel;
@@ -34,9 +35,9 @@ use Veelasky\LaravelHashId\Eloquent\HashableId;
  * @property string locale
  * @property string excerpt
  * @property string content
- * @property string seo_title
- * @property string seo_keywords
- * @property string seo_description
+// * @property string seo_title
+// * @property string seo_keywords
+// * @property string seo_description
  *
  * @method static static create(...$args)
  * @method static static first()
@@ -48,6 +49,7 @@ use Veelasky\LaravelHashId\Eloquent\HashableId;
  *
  * @method static static withType(PostType $type)
  * @method static static withTeam($team_id)
+ * @method static save()
  *
  *  //relations
  * @property MediaModel $image
@@ -62,10 +64,13 @@ class BlogModel extends BaseMysqlModel implements HasMedia
     use HashableId;
     use InteractsWithMedia;
     use HasTranslations;
+    use HasSeo;
 
     protected $table = 'blogs';
 
-    public $translatable = ['slug', 'title', 'excerpt', 'content', 'seo_title', 'seo_keywords', 'seo_description'];
+    public $translatable = ['slug', 'title', 'excerpt', 'content',
+//        'seo_title', 'seo_keywords', 'seo_description'
+        ];
 
     //region hash id
     protected $hashKey = self::class;
@@ -100,9 +105,9 @@ class BlogModel extends BaseMysqlModel implements HasMedia
         'excerpt',
         'content',
 
-        'seo_title',
-        'seo_keywords',
-        'seo_content',
+//        'seo_title',
+//        'seo_keywords',
+//        'seo_content',
 
         'image_id',
         'gallery_ids',

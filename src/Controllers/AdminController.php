@@ -10,6 +10,7 @@ use Brucelwayne\Blog\Enums\BlogType;
 use Brucelwayne\Blog\Facades\BlogFacade;
 use Brucelwayne\Blog\Models\BlogModel;
 use Brucelwayne\Blog\Requests\BlogCrudRequest;
+use Brucelwayne\SEO\SeoType;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -100,7 +101,10 @@ class AdminController extends Controller
         $stats = BlogStatus::from($request->validated('status'));
         $type = BlogType::from($request->validated('type'));
 
-        $image_id = empty($request->validated('image_id')) ? null : MediaModel::hashToId($request->validated('image_id'));
+        $image_hash = $request->validated('image_id');
+        $media = MediaModel::byHashOrFail($image_hash);
+        $image_id = $image_hash ? MediaModel::hashToId($image_hash) : null;
+
         $video_id = empty($request->validated('video_id')) ? null : MediaModel::hashToId($request->validated('video_id'));
         $gallery_ids = empty($request->validated('gallery_ids')) ? null : collect($request->validated('gallery_ids'))->map(function ($g) {
             return MediaModel::hashToId($g);
@@ -153,9 +157,18 @@ class AdminController extends Controller
         $blog_model->setTranslation('excerpt', $locale, $request->validated('excerpt'));
         $blog_model->setTranslation('content', $locale, $request->validated('content'));
 
-        $blog_model->setTranslation('seo_title', $locale, $request->validated('seo_title'));
-        $blog_model->setTranslation('seo_keywords', $locale, $request->validated('seo_keywords'));
-        $blog_model->setTranslation('seo_description', $locale, $request->validated('seo_description'));
+//        $blog_model->setTranslation('seo_title', $locale, $request->validated('seo_title'));
+//        $blog_model->setTranslation('seo_keywords', $locale, $request->validated('seo_keywords'));
+//        $blog_model->setTranslation('seo_description', $locale, $request->validated('seo_description'));
+
+        $blog_model->seo()->setType(SeoType::Article);
+        $blog_model->seo()->setImageUrl($media->original_url);
+        $blog_model->seo()->setUrl($blog_model->getUrl($locale));
+        $blog_model->seo()->setCanonical($blog_model->getUrl($locale));
+        $blog_model->seo()->setTitle($request->validated('seo_title'),$locale);
+        $blog_model->seo()->setDescription($request->validated('seo_description'),$locale);
+        $blog_model->seo()->setKeywords($request->validated('seo_keywords'),$locale);
+
         $blog_model->save();
 
         return to_route('admin.blog.edit.show', [
@@ -219,6 +232,7 @@ class AdminController extends Controller
 //        }
 
         $image_hash = $request->validated('image_id');
+        $media = MediaModel::byHashOrFail($image_hash);
         $image_id = $image_hash ? MediaModel::hashToId($image_hash) : null;
 
         $gallery_ids = empty($request->validated('gallery_ids')) ? null : collect($request->validated('gallery_ids'))->map(function ($g) {
@@ -246,9 +260,17 @@ class AdminController extends Controller
         $blog_model->setTranslation('excerpt', $locale, $request->validated('excerpt'));
         $blog_model->setTranslation('content', $locale, $request->validated('content'));
 
-        $blog_model->setTranslation('seo_title', $locale, $request->validated('seo_title'));
-        $blog_model->setTranslation('seo_keywords', $locale, $request->validated('seo_keywords'));
-        $blog_model->setTranslation('seo_description', $locale, $request->validated('seo_description'));
+//        $blog_model->setTranslation('seo_title', $locale, $request->validated('seo_title'));
+//        $blog_model->setTranslation('seo_keywords', $locale, $request->validated('seo_keywords'));
+//        $blog_model->setTranslation('seo_description', $locale, $request->validated('seo_description'));
+
+        $blog_model->seo()->setType(SeoType::Article);
+        $blog_model->seo()->setImageUrl($media->original_url);
+        $blog_model->seo()->setUrl($blog_model->getUrl($locale));
+        $blog_model->seo()->setCanonical($blog_model->getUrl($locale));
+        $blog_model->seo()->setTitle($request->validated('seo_title'),$locale);
+        $blog_model->seo()->setDescription($request->validated('seo_description'),$locale);
+        $blog_model->seo()->setKeywords($request->validated('seo_keywords'),$locale);
 
         if ($blog_model->save()) {
             $status = 'success';
@@ -257,7 +279,6 @@ class AdminController extends Controller
             $status = 'error';
             $message = 'Update blog post error!';
         }
-
 
         return redirect()->back()
             ->with('blog', $blog_model)
