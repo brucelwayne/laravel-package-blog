@@ -11,16 +11,12 @@ use Brucelwayne\Blog\Facades\BlogFacade;
 use Brucelwayne\Blog\Models\BlogModel;
 use Brucelwayne\Blog\Requests\BlogCrudRequest;
 use Brucelwayne\SEO\Enums\SeoType;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Mallria\Core\Enums\PostStatus;
 use Mallria\Core\Facades\Inertia;
-use Mallria\Core\Facades\NanoIdFacade;
 use Mallria\Core\Http\Responses\ErrorJsonResponse;
 use Mallria\Core\Http\Responses\SuccessJsonResponse;
 use Mallria\Media\Models\MediaModel;
-use Mallria\Wordpress\WP\Resources\Media;
 
 class AdminController extends Controller
 {
@@ -102,7 +98,10 @@ class AdminController extends Controller
         $type = BlogType::from($request->validated('type'));
 
         $image_hash = $request->validated('image_id');
-        $media = MediaModel::byHashOrFail($image_hash);
+        $media = null;
+        if (!empty($image_hash)){
+            $media = MediaModel::byHash($image_hash);
+        }
         $image_id = $image_hash ? MediaModel::hashToId($image_hash) : null;
 
         $video_id = empty($request->validated('video_id')) ? null : MediaModel::hashToId($request->validated('video_id'));
@@ -157,19 +156,21 @@ class AdminController extends Controller
         $blog_model->setTranslation('excerpt', $locale, $request->validated('excerpt'));
         $blog_model->setTranslation('content', $locale, $request->validated('content'));
 
+        $blog_model->save();
+        
 //        $blog_model->setTranslation('seo_title', $locale, $request->validated('seo_title'));
 //        $blog_model->setTranslation('seo_keywords', $locale, $request->validated('seo_keywords'));
 //        $blog_model->setTranslation('seo_description', $locale, $request->validated('seo_description'));
 
         $blog_model->seo()->setType(SeoType::Article);
-        $blog_model->seo()->setImageUrl($media->original_url);
+        $blog_model->seo()->setImageUrl(empty($media->original_url) ?? '');
         $blog_model->seo()->setUrl($blog_model->getUrl($locale));
         $blog_model->seo()->setCanonical($blog_model->getUrl($locale));
         $blog_model->seo()->setTitle($request->validated('seo_title'),$locale);
         $blog_model->seo()->setDescription($request->validated('seo_description'),$locale);
         $blog_model->seo()->setKeywords($request->validated('seo_keywords'),$locale);
 
-        $blog_model->save();
+
 
         return to_route('admin.blog.edit.show', [
             'hash' => $blog_model->hash,
