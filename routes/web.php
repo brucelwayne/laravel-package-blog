@@ -2,12 +2,10 @@
 
 
 use Brucelwayne\Blog\Controllers\BlogController;
-use Brucelwayne\Blog\Models\BlogModel;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
-Route::middleware(['web', 'localizationRedirect'])
+Route::middleware(['web', 'tenant:guest', 'localizationRedirect'])
     ->prefix(LaravelLocalization::setLocale())
     ->group(function () {
         Route::prefix('blog')->group(function(){
