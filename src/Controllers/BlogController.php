@@ -42,12 +42,13 @@ class BlogController extends Controller
 
     function index()
     {
-        $blog_models = BlogModel::where('team_id', 0)
-            ->orderBy('id', 'DESC')
-            ->paginate(10)
-            ->withQueryString();
-        return view('blog::blog.index', [
-            'blogs' => $blog_models,
-        ]);
+        return redirect()->away('https://blog.'.config('app.domain'));
+//        $blog_models = BlogModel::where('team_id', 0)
+//            ->orderBy('id', 'DESC')
+//            ->paginate(10)
+//            ->withQueryString();
+//        return view('blog::blog.index', [
+//            'blogs' => $blog_models,
+//        ]);
     }
 }
