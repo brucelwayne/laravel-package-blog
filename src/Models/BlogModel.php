@@ -11,7 +11,6 @@ use Mallria\Media\Models\MediaModel;
 use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 use Spatie\MediaLibrary\HasMedia;
 use Spatie\MediaLibrary\InteractsWithMedia;
-use Spatie\Sluggable\HasTranslatableSlug;
 use Spatie\Translatable\HasTranslations;
 use Veelasky\LaravelHashId\Eloquent\HashableId;
 
@@ -49,7 +48,7 @@ use Veelasky\LaravelHashId\Eloquent\HashableId;
  *
  * @method static static withType(PostType $type)
  * @method static static withTeam($team_id)
- * @method static save()
+ * @method static save($data)
  *
  *  //relations
  * @property MediaModel $image
