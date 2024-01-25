@@ -3,7 +3,6 @@
 namespace Brucelwayne\Blog\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 /**
  * @property integer blog_id
@@ -11,7 +10,7 @@ use Illuminate\Support\Str;
  */
 class BlogRevisionModel extends Model
 {
-    protected $table = 'blog_revisions';
+    protected $table = 'blw_blog_revisions';
 
     protected $casts = [
         'payload' => 'array',

@@ -65,7 +65,7 @@ class BlogModel extends BaseMysqlModel implements HasMedia
     use HasTranslations;
     use HasSeo;
 
-    protected $table = 'blogs';
+    protected $table = 'blw_blogs';
 
     public $translatable = ['slug', 'title', 'excerpt', 'content',
 //        'seo_title', 'seo_keywords', 'seo_description'

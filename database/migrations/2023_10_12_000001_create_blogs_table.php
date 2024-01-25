@@ -11,7 +11,7 @@ return new class extends Migration {
 
     public function up(): void
     {
-        Schema::create('blogs', function ($table) {
+        Schema::create('blw_blogs', function ($table) {
             /**
              * @var Illuminate\Database\Schema\Blueprint|MongoDB\Laravel\Schema\Blueprint $table
              */
@@ -40,7 +40,7 @@ return new class extends Migration {
 
         });
 
-        Schema::create('blog_revisions', function ($table) {
+        Schema::create('blw_blog_revisions', function ($table) {
             /**
              * @var Illuminate\Database\Schema\Blueprint|MongoDB\Laravel\Schema\Blueprint $table
              */
@@ -53,7 +53,7 @@ return new class extends Migration {
 
     public function down(): void
     {
-        Schema::dropIfExists('blogs');
-        Schema::dropIfExists('blog_revisions');
+        Schema::dropIfExists('blw_blogs');
+        Schema::dropIfExists('blw_blog_revisions');
     }
 };
