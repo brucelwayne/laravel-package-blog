@@ -34,9 +34,9 @@ use Veelasky\LaravelHashId\Eloquent\HashableId;
  * @property string locale
  * @property string excerpt
  * @property string content
-// * @property string seo_title
-// * @property string seo_keywords
-// * @property string seo_description
+ * // * @property string seo_title
+ * // * @property string seo_keywords
+ * // * @property string seo_description
  *
  * @method static static create(...$args)
  * @method static static first()
@@ -65,11 +65,10 @@ class BlogModel extends BaseMysqlModel implements HasMedia
     use HasTranslations;
     use HasSeo;
 
-    protected $table = 'blw_blogs';
-
     public $translatable = ['slug', 'title', 'excerpt', 'content',
 //        'seo_title', 'seo_keywords', 'seo_description'
-        ];
+    ];
+    protected $table = 'blw_blogs';
 
     //region hash id
     protected $hashKey = self::class;
@@ -80,16 +79,9 @@ class BlogModel extends BaseMysqlModel implements HasMedia
         'gallery_hash_ids',
         'seo',
     ];
-
-    public function getRouteKeyName(): string
-    {
-        return 'hash';
-    }
-
     protected $hidden = [
         'id',
     ];
-
     protected $fillable = [
         'team_id',
         'creator_id',
@@ -113,27 +105,74 @@ class BlogModel extends BaseMysqlModel implements HasMedia
         'gallery_ids',
         'video_id',
     ];
-
     protected $casts = [
         'type' => BlogType::class,
         'status' => BlogStatus::class,
         'gallery_ids' => 'array',
     ];
-
     protected $with = [
         'image',
         'video',
     ];
 
+    public static function createDraft($creator_id, $team_id = 0): static
+    {
+        return static::create([
+            'team_id' => $team_id,
+            'creator_id' => $creator_id,
+            'status' => BlogStatus::Draft->value,
+        ]);
+    }
+
     //region attributes
+
+    public static function byId($id)
+    {
+        return static::where('id', $id)
+            ->first();
+    }
+
+    public function getRouteKeyName(): string
+    {
+        return 'hash';
+    }
+
     function getUrlAttribute()
     {
         return $this->getUrl();
     }
 
+    //endregion
+
+    public function getUrl($localCode = null)
+    {
+        if (empty($localCode)) {
+            $localCode = LaravelLocalization::getCurrentLocale();
+        }
+        $slug = $this->getTranslation('slug', $localCode);
+        return route('blog.single', ['hash' => $this->hash, 'slug' => $slug]);
+    }
+
     function getGalleryAttribute()
     {
         return $this->getGallery();
+    }
+
+    public function getGallery()
+    {
+//        return $this->hasMany(MediaModel::class, 'id', 'gallery_ids');
+
+        if (empty($this->gallery_ids)) {
+            return null;
+        }
+        $gallery_models = MediaModel::whereIn('id', $this->gallery_ids)->orderBy('id', 'asc')->get();
+        $gallery = [];
+        foreach ($this->gallery_ids as $gallery_id) {
+            $gallery[] = collect($gallery_models)->first(function ($gallery_model) use ($gallery_id) {
+                return $gallery_model->getKey() === $gallery_id;
+            });
+        }
+        return $gallery;
     }
 
     function getGalleryHashIdsAttribute()
@@ -147,14 +186,13 @@ class BlogModel extends BaseMysqlModel implements HasMedia
         return [];
     }
 
-    //endregion
-
     public function registerMediaConversions($media = null): void
     {
-        $this->addMediaConversion('thumb')
-            ->width(368)
-            ->height(232)
-            ->sharpen(10);
+        generate_thumbnail($this, $media);
+//        $this->addMediaConversion('thumb')
+//            ->width(368)
+//            ->height(232)
+//            ->sharpen(10);
     }
 
     public function scopeWithType($query, BlogType $type)
@@ -165,42 +203,6 @@ class BlogModel extends BaseMysqlModel implements HasMedia
     public function scopeWithTeam($query, $team_id = 0)
     {
         return $query->where('team_id', $team_id);
-    }
-
-    public static function createDraft($creator_id, $team_id = 0): static
-    {
-        return static::create([
-            'team_id' => $team_id,
-            'creator_id' => $creator_id,
-            'status' => BlogStatus::Draft->value,
-        ]);
-    }
-
-    public function image()
-    {
-        return $this->hasOne(MediaModel::class, 'id', 'image_id');
-    }
-
-    public function video()
-    {
-        return $this->hasOne(MediaModel::class, 'id', 'video_id');
-    }
-
-    public function getGallery()
-    {
-//        return $this->hasMany(MediaModel::class, 'id', 'gallery_ids');
-
-        if (empty($this->gallery_ids)) {
-            return null;
-        }
-        $gallery_models = MediaModel::whereIn('id', $this->gallery_ids)->orderBy('id', 'asc')->get();
-        $gallery = [];
-        foreach ($this->gallery_ids as $gallery_id) {
-            $gallery[] = collect($gallery_models)->first(function($gallery_model) use ($gallery_id){
-                return $gallery_model->getKey() === $gallery_id;
-            });
-        }
-        return $gallery;
     }
 
 
@@ -218,18 +220,13 @@ class BlogModel extends BaseMysqlModel implements HasMedia
 //            ->firstOrFail();
 //    }
 
-    public static function byId($id)
+    public function image()
     {
-        return static::where('id', $id)
-            ->first();
+        return $this->hasOne(MediaModel::class, 'id', 'image_id');
     }
 
-    public function getUrl($localCode = null)
+    public function video()
     {
-        if (empty($localCode)) {
-            $localCode = LaravelLocalization::getCurrentLocale();
-        }
-        $slug = $this->getTranslation('slug', $localCode);
-        return route('blog.single', ['hash' => $this->hash, 'slug' => $slug]);
+        return $this->hasOne(MediaModel::class, 'id', 'video_id');
     }
 }
