@@ -71,7 +71,7 @@ class BlogModel extends BaseMysqlModel implements HasMedia
     protected $table = 'blw_blogs';
 
     //region hash id
-    protected $hashKey = self::class;
+    protected $hashKey = 'blw_blogs';
     protected $appends = [
         'hash',
         'url',
