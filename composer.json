@@ -9,7 +9,6 @@
         }
     ],
     "require": {
-        "unisharp/laravel-filemanager": "^v2.6",
         "spatie/laravel-sluggable": "^3.5",
         "rinvex/laravel-categories": "^7.1",
         "spatie/laravel-translatable": "^6.5",
