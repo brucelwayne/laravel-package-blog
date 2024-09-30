@@ -3,15 +3,11 @@
 namespace Brucelwayne\Blog\Controllers;
 
 use Brucelwayne\Admin\Models\AdminModel;
-use Brucelwayne\Blog\Models\BlogModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Mallria\Core\Http\Controllers\BaseController;
 use Mallria\Core\Http\Responses\SuccessJsonResponse;
-use Mallria\Core\Models\Team;
 use Mallria\Media\Enums\MediaCollectionNames;
-use Mallria\Media\Models\MediaModel;
-use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class MediaController extends BaseController
 {
@@ -33,7 +29,7 @@ class MediaController extends BaseController
         if (!empty($admin_model)) {
             $media = $admin_model->addMediaFromRequest('upload')
                 ->usingFileName(Str::ulid() . '.' . $request->file('upload')->extension())
-                ->toMediaCollection(MediaCollectionNames::Blog->value);
+                ->toMediaCollection(MediaCollectionNames::Media->value);
             return new SuccessJsonResponse(['media' => $media]);
         }
     }
