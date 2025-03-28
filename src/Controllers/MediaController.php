@@ -2,7 +2,7 @@
 
 namespace Brucelwayne\Blog\Controllers;
 
-use Brucelwayne\Admin\Models\AdminModel;
+use Brucelwayne\Admin\Models\AdminUserModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Mallria\Core\Http\Controllers\BaseController;
@@ -23,7 +23,7 @@ class MediaController extends BaseController
 //        }
 
         /**
-         * @var AdminModel $admin_model
+         * @var AdminUserModel $admin_model
          */
         $admin_model = auth()->guard('admin')->user();
         if (!empty($admin_model)) {
