@@ -3,7 +3,7 @@
 namespace Brucelwayne\Blog\Controllers;
 
 use App\Http\Controllers\Controller;
-use Brucelwayne\Admin\Models\AdminUser;
+use Brucelwayne\Admin\Models\AdminUserModel;
 use Brucelwayne\Blog\Enums\BlogCrudActions;
 use Brucelwayne\Blog\Enums\BlogStatus;
 use Brucelwayne\Blog\Enums\BlogType;
