@@ -42,8 +42,8 @@ class BlogServiceProvider extends ServiceProvider
 
     protected function bootRoutes(): void
     {
-        $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
-        $this->loadRoutesFrom(__DIR__ . '/../routes/admin.php');
+//        $this->loadRoutesFrom(__DIR__ . '/../routes/web.php');
+//        $this->loadRoutesFrom(__DIR__ . '/../routes/admin.php');
     }
 
     protected function bootMigrations(): void
